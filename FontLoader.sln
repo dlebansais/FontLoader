@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32819.101
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FontLoader", "FontLoader\FontLoader.csproj", "{54BDC95D-F463-4DC6-9F6E-614A4748FF7C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fonts", "Fonts\Fonts.csproj", "{262F7921-FF03-44A8-BECC-590C86DB97E1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestFontLoader", "Test\TestFontLoader\TestFontLoader.csproj", "{29BC66FD-D33D-47D2-A361-268F4CEADA77}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{54BDC95D-F463-4DC6-9F6E-614A4748FF7C}.Debug|x64.ActiveCfg = Debug|x64
+		{54BDC95D-F463-4DC6-9F6E-614A4748FF7C}.Debug|x64.Build.0 = Debug|x64
+		{54BDC95D-F463-4DC6-9F6E-614A4748FF7C}.Release|x64.ActiveCfg = Release|x64
+		{54BDC95D-F463-4DC6-9F6E-614A4748FF7C}.Release|x64.Build.0 = Release|x64
+		{262F7921-FF03-44A8-BECC-590C86DB97E1}.Debug|x64.ActiveCfg = Debug|x64
+		{262F7921-FF03-44A8-BECC-590C86DB97E1}.Debug|x64.Build.0 = Debug|x64
+		{262F7921-FF03-44A8-BECC-590C86DB97E1}.Release|x64.ActiveCfg = Release|x64
+		{262F7921-FF03-44A8-BECC-590C86DB97E1}.Release|x64.Build.0 = Release|x64
+		{29BC66FD-D33D-47D2-A361-268F4CEADA77}.Debug|x64.ActiveCfg = Debug|x64
+		{29BC66FD-D33D-47D2-A361-268F4CEADA77}.Debug|x64.Build.0 = Debug|x64
+		{29BC66FD-D33D-47D2-A361-268F4CEADA77}.Release|x64.ActiveCfg = Release|x64
+		{29BC66FD-D33D-47D2-A361-268F4CEADA77}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {98223221-D0AD-40F2-9011-B5B87CD7BF29}
+	EndGlobalSection
+EndGlobal
