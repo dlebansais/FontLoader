@@ -18,7 +18,7 @@ public class FontPixelArray
         Height = 0;
         Baseline = 0;
         Array = new byte[0, 0];
-        IsWhiteColumn = new bool[0];
+        WhiteColumn = new bool[0];
         ColoredCountColumn = new int[0];
     }
 
@@ -29,7 +29,7 @@ public class FontPixelArray
         Baseline = baseline;
 
         Array = new byte[Width, Height];
-        IsWhiteColumn = new bool[Width];
+        WhiteColumn = new bool[Width];
         ColoredCountColumn = new int[Width];
     }
 
@@ -40,7 +40,7 @@ public class FontPixelArray
         Baseline = baseline;
 
         Array = new byte[Width, Height];
-        IsWhiteColumn = new bool[Width];
+        WhiteColumn = new bool[Width];
         ColoredCountColumn = new int[Width];
 
         for (int x = 0; x < width; x++)
@@ -74,7 +74,7 @@ public class FontPixelArray
                 }
             }
 
-            IsWhiteColumn[x] = IsWhite;
+            WhiteColumn[x] = IsWhite;
             ColoredCountColumn[x] = ColoredCount;
         }
     }
@@ -110,12 +110,53 @@ public class FontPixelArray
     public int Baseline { get; }
 
     private byte[,] Array;
-    private bool[] IsWhiteColumn;
+    private bool[] WhiteColumn;
     private int[] ColoredCountColumn;
+
+    public byte GetPixel(int x, int y)
+    {
+        return Array[x, y];
+    }
+
+    public void SetPixel(int x, int y, byte value)
+    {
+        Array[x, y] = value;
+    }
+
+    public void ClearPixel(int x, int y)
+    {
+        Array[x, y] = 0xFF;
+    }
 
     public bool IsWhite(int x, int y)
     {
         return Array[x, y] == 0xFF;
+    }
+
+    public bool IsWhiteColumn(int x)
+    {
+        return WhiteColumn[x];
+    }
+
+    public void SetWhiteColumn(int x, bool isWhite)
+    {
+        WhiteColumn[x] = isWhite;
+    }
+
+    public int GetColoredCountColumn(int x)
+    {
+        return ColoredCountColumn[x];
+    }
+
+    public void SetColoredCountColumn(int x, int coloredCount)
+    {
+        ColoredCountColumn[x] = coloredCount;
+    }
+
+    public bool IsColored(int x, int y, out byte color)
+    {
+        color = Array[x, y];
+        return color != 0xFF && color != 0;
     }
 
     private static void CopyPixel(FontPixelArray p1, int x1, int y1, FontPixelArray p2, int x2, int y2, ref bool isWhite, ref int coloredCount)
@@ -223,7 +264,7 @@ public class FontPixelArray
                     for (int y = 0; y < Result.Height; y++)
                         CopyPixel(this, LeftEdge + x, TopEdge + y, Result, x, y, ref IsWhite, ref ColoredCount);
 
-                    Result.IsWhiteColumn[x] = IsWhite;
+                    Result.WhiteColumn[x] = IsWhite;
                     Result.ColoredCountColumn[x] = ColoredCount;
                 }
 
@@ -252,15 +293,15 @@ public class FontPixelArray
 
     public bool IsClippedColumn(int column)
     {
-        bool IsWhiteColumn = true;
+        bool WhiteColumn = true;
         for (int y = 0; y < Height; y++)
             if (!IsWhite(column, y))
             {
-                IsWhiteColumn = false;
+                WhiteColumn = false;
                 break;
             }
 
-        return !IsWhiteColumn;
+        return !WhiteColumn;
     }
 
     public bool IsClippedRow(int row)
@@ -274,6 +315,44 @@ public class FontPixelArray
             }
 
         return !IsWhiteRow;
+    }
+
+    public FontPixelArray GetLeftSide(int leftWidth)
+    {
+        FontPixelArray Result = new FontPixelArray(leftWidth, Height, Baseline);
+
+        for (int x = 0; x < leftWidth; x++)
+        {
+            bool IsWhite = true;
+            int ColoredCount = 0;
+
+            for (int y = 0; y < Height; y++)
+                CopyPixel(this, x, y, Result, x, y, ref IsWhite, ref ColoredCount);
+
+            Result.WhiteColumn[x] = IsWhite;
+            Result.ColoredCountColumn[x] = ColoredCount;
+        }
+
+        return Result;
+    }
+
+    public FontPixelArray GetRightSide(int rightWidth)
+    {
+        FontPixelArray Result = new FontPixelArray(rightWidth, Height, Baseline);
+
+        for (int x = 0; x < rightWidth; x++)
+        {
+            bool IsWhite = true;
+            int ColoredCount = 0;
+
+            for (int y = 0; y < Height; y++)
+                CopyPixel(this, Width - rightWidth + x, y, Result, x, y, ref IsWhite, ref ColoredCount);
+
+            Result.WhiteColumn[x] = IsWhite;
+            Result.ColoredCountColumn[x] = ColoredCount;
+        }
+
+        return Result;
     }
 
     public void DebugPrint()
