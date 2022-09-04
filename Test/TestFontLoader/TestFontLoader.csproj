@@ -22,7 +22,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="FakeResource.png" />
+    <None Remove="Black.png" />
+    <None Remove="White.png" />
     <None Remove="FakeResource.txt" />
 	<None Remove="PageResources/**/*.*" />
 	<None Remove="FontResources/**/*.*" />
@@ -30,7 +31,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="FakeResource.png" />
+    <EmbeddedResource Include="Black.png" />
+    <EmbeddedResource Include="White.png" />
     <EmbeddedResource Include="FakeResource.txt" />
     <EmbeddedResource Include="PageResources/**/*.*" />
     <EmbeddedResource Include="FontResources/**/*.*" />
