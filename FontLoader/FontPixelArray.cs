@@ -156,7 +156,12 @@ public class FontPixelArray
     public bool IsColored(int x, int y, out byte color)
     {
         color = Array[x, y];
-        return color != 0xFF && color != 0;
+
+        bool IsWhite = color == 0xFF;
+        bool IsBlack = color == 0;
+        bool Result = !IsWhite && !IsBlack;
+
+        return Result;
     }
 
     private static void CopyPixel(FontPixelArray p1, int x1, int y1, FontPixelArray p2, int x2, int y2, ref bool isWhite, ref int coloredCount)
