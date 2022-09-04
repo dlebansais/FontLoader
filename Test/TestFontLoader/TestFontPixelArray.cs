@@ -30,6 +30,14 @@ public class TestFontPixelArray
         FontPixelArray BlackClipped = BlackPixelArray.Clipped();
         Assert.IsTrue(BlackClipped.IsClipped);
 
+        Stream MixedBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestFontPixelArray).Namespace}.Mixed.png");
+        Bitmap MixedBitmap = new Bitmap(MixedBitmapStream);
+        FontPixelArray MixedPixelArray = FontPixelArray.FromBitmap(MixedBitmap);
+        MixedPixelArray.DebugPrint();
+        Assert.IsFalse(MixedPixelArray.IsClipped);
+        FontPixelArray MixedClipped = MixedPixelArray.Clipped();
+        Assert.IsTrue(MixedClipped.IsClipped);
+
         Stream WhiteBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestFontPixelArray).Namespace}.White.png");
         Bitmap WhiteBitmap = new Bitmap(WhiteBitmapStream);
         FontPixelArray WhitePixelArray = FontPixelArray.FromBitmap(WhiteBitmap);

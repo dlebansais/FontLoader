@@ -240,7 +240,13 @@ public class FontPixelArray
     {
         get
         {
-            return IsClippedColumn(0) && IsClippedColumn(Width - 1) && IsClippedRow(0) && IsClippedRow(Height - 1);
+            bool Result = true;
+            Result &= IsClippedColumn(0);
+            Result &= IsClippedColumn(Width - 1);
+            Result &= IsClippedRow(0);
+            Result &= IsClippedRow(Height - 1);
+
+            return Result;
         }
     }
 
