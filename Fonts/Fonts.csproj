@@ -6,7 +6,7 @@
 	<Nullable>enable</Nullable>
 	<Platforms>x64</Platforms>
 	<NeutralLanguage>en-US</NeutralLanguage>
-	<RootNamespace>FontScanner</RootNamespace>
+	<RootNamespace>FontLoader</RootNamespace>
 	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 

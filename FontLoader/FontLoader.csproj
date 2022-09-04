@@ -6,8 +6,18 @@
     <Nullable>enable</Nullable>
     <Platforms>x64</Platforms>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <RootNamespace>FontScanner</RootNamespace>
+    <RootNamespace>FontLoader</RootNamespace>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Authors>David Le Bansais</Authors>
+    <Product />
+    <Description>Simple font loader</Description>
+    <Copyright>Copyright © 2022 David Le Bansais</Copyright>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.1</AssemblyVersion>
+    <FileVersion>1.0.0.1</FileVersion>
+    <RepositoryUrl>https://github.com/dlebansais/Packager</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>
 
   <ItemGroup>
