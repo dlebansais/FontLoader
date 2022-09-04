@@ -28,30 +28,7 @@ public class ScannerFont
 
         foreach (string ResourceName in ResourceNames)
         {
-            string[] Splitted = ResourceName.Split('.');
-            if (Splitted.Length < 3)
-                continue;
-
-            if (Splitted[Splitted.Length - 3] != "PageResources")
-                continue;
-
-            string CharacterString = Splitted[Splitted.Length - 2];
-            string Extension = Splitted[Splitted.Length - 1];
-
-            if (Extension != "png")
-                continue;
-
-            if (!CharacterString.StartsWith("Page"))
-                continue;
-
-            CharacterString = CharacterString.Substring(4);
-
-            char Character;
-            if (CharacterString == "Slash")
-                Character = '/';
-            else if (CharacterString.Length == 1 && CharacterString[0] >= '0' && CharacterString[0] <= '9')
-                Character = CharacterString[0];
-            else
+            if (!TryParseProgressFontResource(ResourceName, out char Character))
                 continue;
 
             Stream PageBitmapStream = fontAssembly.GetManifestResourceStream(ResourceName);
@@ -64,6 +41,38 @@ public class ScannerFont
         return ProgressTable;
     }
 
+    private bool TryParseProgressFontResource(string resourceName, out char character)
+    {
+        character = '\0';
+
+        string[] Splitted = resourceName.Split('.');
+        if (Splitted.Length < 3)
+            return false;
+
+        if (Splitted[Splitted.Length - 3] != "PageResources")
+            return false;
+
+        string CharacterString = Splitted[Splitted.Length - 2];
+        string Extension = Splitted[Splitted.Length - 1];
+
+        if (Extension != "png")
+            return false;
+
+        if (!CharacterString.StartsWith("Page"))
+            return false;
+
+        CharacterString = CharacterString.Substring(4);
+
+        if (CharacterString == "Slash")
+            character = '/';
+        else if (CharacterString.Length == 1 && CharacterString[0] >= '0' && CharacterString[0] <= '9')
+            character = CharacterString[0];
+        else
+            return false;
+
+        return true;
+    }
+
     private FontBitmap FillFontBitmap(Assembly fontAssembly)
     {
         Dictionary<LetterType, Stream> StreamTable = new();
@@ -71,69 +80,8 @@ public class ScannerFont
 
         foreach (string ResourceName in ResourceNames)
         {
-            string[] Splitted = ResourceName.Split('.');
-            if (Splitted.Length < 7)
+            if (!TryParseFontResource(ResourceName, out double FontSize, out bool IsBlue, out bool IsItalic, out bool IsBold))
                 continue;
-
-            if (Splitted[Splitted.Length - 6] != "FontResources")
-                continue;
-
-            string FontSizeString = Splitted[Splitted.Length - 4];
-            string FontColorString = Splitted[Splitted.Length - 3];
-            string LetterTypeString = Splitted[Splitted.Length - 2];
-            string Extension = Splitted[Splitted.Length - 1];
-
-            if (Extension != "png")
-                continue;
-
-            bool IsItalic;
-            bool IsBold;
-            double FontSize;
-
-            if (LetterTypeString == "normal")
-            {
-                IsItalic = false;
-                IsBold = false;
-            }
-            else if (LetterTypeString == "italic")
-            {
-                IsItalic = true;
-                IsBold = false;
-            }
-            else if (LetterTypeString == "bold")
-            {
-                IsItalic = false;
-                IsBold = true;
-            }
-            else if (LetterTypeString == "italic+bold")
-            {
-                IsItalic = true;
-                IsBold = true;
-            }
-            else
-                continue;
-
-            bool IsBlue;
-
-            if (FontColorString == "blue")
-            {
-                IsBlue = true;
-            }
-            else if (FontColorString == "black")
-            {
-                IsBlue = false;
-            }
-            else
-                continue;
-
-            while (FontSizeString.StartsWith("_") || FontSizeString.StartsWith("0"))
-                FontSizeString = FontSizeString.Substring(1);
-            FontSizeString = FontSizeString.Replace("x", ".");
-
-            if (!double.TryParse(FontSizeString, NumberStyles.Float, CultureInfo.InvariantCulture, out FontSize) || FontSize < LetterType.MinFontSize)
-                continue;
-
-            //Debug.WriteLine(ResourceName);
 
             LetterType FontLetterType = new(FontSize, IsBlue, IsItalic, IsBold);
             Stream FontBitmapStream = fontAssembly.GetManifestResourceStream(ResourceName);
@@ -142,6 +90,72 @@ public class ScannerFont
         }
 
         return new FontBitmap(StreamTable);
+    }
+
+    private bool TryParseFontResource(string resourceName, out double fontSize, out bool isBlue, out bool isItalic, out bool isBold)
+    {
+        fontSize = 0;
+        isBlue = false;
+        isItalic = false;
+        isBold = false;
+
+        string[] Splitted = resourceName.Split('.');
+        if (Splitted.Length < 7)
+            return false;
+
+        if (Splitted[Splitted.Length - 6] != "FontResources")
+            return false;
+
+        string FontSizeString = Splitted[Splitted.Length - 4];
+        string FontColorString = Splitted[Splitted.Length - 3];
+        string LetterTypeString = Splitted[Splitted.Length - 2];
+        string Extension = Splitted[Splitted.Length - 1];
+
+        if (Extension != "png")
+            return false;
+
+        if (LetterTypeString == "normal")
+        {
+            isItalic = false;
+            isBold = false;
+        }
+        else if (LetterTypeString == "italic")
+        {
+            isItalic = true;
+            isBold = false;
+        }
+        else if (LetterTypeString == "bold")
+        {
+            isItalic = false;
+            isBold = true;
+        }
+        else if (LetterTypeString == "italic+bold")
+        {
+            isItalic = true;
+            isBold = true;
+        }
+        else
+            return false;
+
+        if (FontColorString == "blue")
+        {
+            isBlue = true;
+        }
+        else if (FontColorString == "black")
+        {
+            isBlue = false;
+        }
+        else
+            return false;
+
+        while (FontSizeString.StartsWith("_") || FontSizeString.StartsWith("0"))
+            FontSizeString = FontSizeString.Substring(1);
+        FontSizeString = FontSizeString.Replace("x", ".");
+
+        if (!double.TryParse(FontSizeString, NumberStyles.Float, CultureInfo.InvariantCulture, out fontSize) || fontSize < LetterType.MinFontSize)
+            return false;
+
+        return true;
     }
 
     private Dictionary<Letter, FontBitmapCell> FillCellTable()
@@ -233,10 +247,13 @@ public class ScannerFont
         {
             Letter Letter = Entry.Key;
             FontBitmapCell Cell = Entry.Value;
-            if (Cell.Column >= 0 && Cell.Column < bitmap.Columns && Cell.Row >= 0 && Cell.Row < bitmap.Rows)
+
+            Debug.Assert(Cell.Column >= 0);
+            Debug.Assert(Cell.Row >= 0);
+
+            if (Cell.Column < bitmap.Columns && Cell.Row < bitmap.Rows)
             {
                 CellTaken[Cell.Column, Cell.Row] = true;
-
                 AddLetter(bitmap, Cell.Column, Cell.Row, CharacterTable, Letter);
             }
         }
@@ -282,6 +299,7 @@ public class ScannerFont
         foreach (LetterType Key in bitmap.SupportedLetterTypes)
         {
             Letter Letter = new Letter(character, Key);
+
             if (!characterTable.ContainsKey(Letter))
             {
                 FontPixelArray CellArray = bitmap.GetPixelArray(column, row, Key);
@@ -298,79 +316,5 @@ public class ScannerFont
     public string Name { get; }
     public Dictionary<char, FontPixelArray> ProgressTable { get; }
     public Dictionary<Letter, FontPixelArray> CharacterTable { get; }
-    #endregion
-
-    #region Client Interface
-    public static List<Letter> GetPreferredOrder(Dictionary<Letter, FontPixelArray> table)
-    {
-        List<Letter> Result = new(table.Keys);
-        Result.Sort(SortByLikelyness);
-
-        return Result;
-    }
-
-    private static int SortByLikelyness(Letter l1, Letter l2)
-    {
-        long Flags1 = LetterFlags(l1);
-        long Flags2 = LetterFlags(l2);
-
-        if (Flags1 > Flags2)
-            return -1;
-        else if (Flags1 < Flags2)
-            return 1;
-
-        if (l1.Text.Length > l2.Text.Length)
-            return -1;
-        else if (l1.Text.Length < l2.Text.Length)
-            return 1;
-
-        if (l1.LetterType.FontSize > l2.LetterType.FontSize)
-            return -1;
-        else if (l1.LetterType.FontSize < l2.LetterType.FontSize)
-            return 1;
-
-        for (int i = 0; i < l1.Text.Length; i++)
-        {
-            char c1 = l1.Text[i];
-            char c2 = l2.Text[i];
-
-            int Order = (int)c1 - (int)c2;
-
-            if (Order != 0)
-                return Order;
-        }
-
-        return 0;
-    }
-
-    private static long LetterFlags(Letter l)
-    {
-        const long FlagItalic = 0x20;
-        const long FlagNotBold = 0x10;
-        const long FlagNotUpper = 0x08;
-        const long FlagLetter = 0x04;
-        const long FlagThreeDots = 0x02;
-        const long FlagNotUpperI = 0x01;
-
-        long Flags = 0;
-
-        if (l.IsItalic)
-            Flags |= FlagItalic;
-        if (!l.IsBold)
-            Flags |= FlagNotBold;
-
-        char c = l.Text[0];
-
-        if (!char.IsUpper(c))
-            Flags |= FlagNotUpper;
-        if (char.IsLetter(c))
-            Flags |= FlagLetter;
-        if (c == '…')
-            Flags |= FlagThreeDots;
-        if (c != 'I')
-            Flags |= FlagNotUpperI;
-
-        return Flags;
-    }
     #endregion
 }

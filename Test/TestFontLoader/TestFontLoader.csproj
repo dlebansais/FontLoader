@@ -21,4 +21,18 @@
     <ProjectReference Include="..\..\Fonts\Fonts.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+	<None Remove="PageResources/**/*.png" />
+    <None Remove="FakeResource.png" />
+    <None Remove="FontResources\FakeResource.png" />
+    <None Remove="OtherResources\FakeResource.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="PageResources/**/*.png" />
+    <EmbeddedResource Include="FakeResource.png" />
+    <EmbeddedResource Include="FontResources\FakeResource.png" />
+    <EmbeddedResource Include="OtherResources\FakeResource.png" />
+  </ItemGroup>
+
 </Project>

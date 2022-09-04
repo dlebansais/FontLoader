@@ -118,22 +118,6 @@ public class FontPixelArray
         return Array[x, y] == 0xFF;
     }
 
-    public bool IsColored(int x, int y, out byte color)
-    {
-        color = Array[x, y];
-        return color != 0xFF && color != 0;
-    }
-
-    public void GetPixel(int x, int y, out uint rgb)
-    {
-        rgb = Array[x, y];
-    }
-
-    private static void ClearPixel(FontPixelArray p, int x, int y)
-    {
-        p.Array[x, y] = 0xFF;
-    }
-
     private static void CopyPixel(FontPixelArray p1, int x1, int y1, FontPixelArray p2, int x2, int y2, ref bool isWhite, ref int coloredCount)
     {
         byte Pixel = p1.Array[x1, y1];
@@ -243,6 +227,7 @@ public class FontPixelArray
                     Result.ColoredCountColumn[x] = ColoredCount;
                 }
 
+                Debug.Assert(Result.IsClipped);
                 return Result;
             }
             else

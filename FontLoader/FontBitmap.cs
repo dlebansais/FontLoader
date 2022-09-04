@@ -20,27 +20,29 @@ public class FontBitmap
     public FontBitmap(Dictionary<LetterType, Stream> streamTable)
     {
         SupportedLetterTypes = new List<LetterType>(streamTable.Keys);
+        LetterTypeBitmapTable = new();
 
         FillBitmapTable(streamTable, out Dictionary<LetterType, Bitmap> BitmapTable, out int FirstWidth, out int FirstHeight);
 
-        Columns = DefaultColumns;
-        int CellSize0 = FirstWidth / Columns;
-        Rows = FirstHeight / CellSize0;
-
-        LetterTypeBitmapTable = new();
-
-        foreach (LetterType Key in SupportedLetterTypes)
+        if (FirstWidth > 0 && FirstHeight > 0)
         {
-            int Width = BitmapTable[Key].Width;
-            int Height = BitmapTable[Key].Height;
+            Columns = DefaultColumns;
+            int CellSize0 = FirstWidth / Columns;
+            Rows = FirstHeight / CellSize0;
 
-            int CellSize = Width / Columns;
-            int Baseline = (int)(CellSize * DefaultBaselineRatio);
-            Rectangle Rect = new Rectangle(0, 0, Width, Height);
-            GetBitmapBytes(BitmapTable[Key], Rect, out int Stride, out byte[] ArgbValues);
+            foreach (LetterType Key in SupportedLetterTypes)
+            {
+                int Width = BitmapTable[Key].Width;
+                int Height = BitmapTable[Key].Height;
 
-            LetterTypeBitmap NewLetterTypeBitmap = new(CellSize, Baseline, Stride, ArgbValues);
-            LetterTypeBitmapTable.Add(Key, NewLetterTypeBitmap);
+                int CellSize = Width / Columns;
+                int Baseline = (int)(CellSize * DefaultBaselineRatio);
+                Rectangle Rect = new Rectangle(0, 0, Width, Height);
+                GetBitmapBytes(BitmapTable[Key], Rect, out int Stride, out byte[] ArgbValues);
+
+                LetterTypeBitmap NewLetterTypeBitmap = new(CellSize, Baseline, Stride, ArgbValues);
+                LetterTypeBitmapTable.Add(Key, NewLetterTypeBitmap);
+            }
         }
     }
 
