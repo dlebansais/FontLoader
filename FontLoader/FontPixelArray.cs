@@ -159,7 +159,7 @@ public class FontPixelArray
 
         bool IsWhite = color == 0xFF;
         bool IsBlack = color == 0;
-        bool Result = !IsWhite && !IsBlack;
+        bool Result = !IsWhite & !IsBlack;
 
         return Result;
     }
