@@ -72,7 +72,8 @@ public class FontBitmap
                 {
                     Bitmap Bitmap1 = bitmapTable[SupportedLetterTypes[i]];
                     Bitmap Bitmap2 = bitmapTable[SupportedLetterTypes[j]];
-                    Debug.Assert(Bitmap1.Width == Bitmap2.Width && Bitmap1.Height == Bitmap2.Height);
+                    Debug.Assert(Bitmap1.Width == Bitmap2.Width);
+                    Debug.Assert(Bitmap1.Height == Bitmap2.Height);
                 }
     }
     #endregion

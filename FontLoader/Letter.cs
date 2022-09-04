@@ -55,11 +55,8 @@ public record Letter
     public LetterType LetterType { get; }
 
     public bool IsEmpty { get { return Text.Length == 0; } }
-    public string DisplayText { get { return $"{LetterType.BlueTag}{LetterType.ItalicTag}{LetterType.BoldTag}{Text}"; } }
     public bool IsBlue { get { return LetterType.IsBlue; } }
-    public string BlueTag { get { return LetterType.BlueTag; } }
     public bool IsItalic { get { return LetterType.IsItalic; } }
-    public string ItalicTag { get { return LetterType.ItalicTag; } }
     public bool IsBold { get { return LetterType.IsBold; } }
-    public string BoldTag { get { return LetterType.BoldTag; } }
+    public string DisplayText { get { return $"{LetterType.BlueTag}{LetterType.ItalicTag}{LetterType.BoldTag}{Text}"; } }
 }

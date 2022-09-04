@@ -22,17 +22,19 @@
   </ItemGroup>
 
   <ItemGroup>
-	<None Remove="PageResources/**/*.png" />
     <None Remove="FakeResource.png" />
-    <None Remove="FontResources\FakeResource.png" />
-    <None Remove="OtherResources\FakeResource.png" />
+    <None Remove="FakeResource.txt" />
+	<None Remove="PageResources/**/*.*" />
+	<None Remove="FontResources/**/*.*" />
+	<None Remove="OtherResources/**/*.*" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="PageResources/**/*.png" />
     <EmbeddedResource Include="FakeResource.png" />
-    <EmbeddedResource Include="FontResources\FakeResource.png" />
-    <EmbeddedResource Include="OtherResources\FakeResource.png" />
+    <EmbeddedResource Include="FakeResource.txt" />
+    <EmbeddedResource Include="PageResources/**/*.*" />
+    <EmbeddedResource Include="FontResources/**/*.*" />
+    <EmbeddedResource Include="OtherResources/**/*.*" />
   </ItemGroup>
 
 </Project>

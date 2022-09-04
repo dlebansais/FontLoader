@@ -227,7 +227,6 @@ public class FontPixelArray
                     Result.ColoredCountColumn[x] = ColoredCount;
                 }
 
-                Debug.Assert(Result.IsClipped);
                 return Result;
             }
             else

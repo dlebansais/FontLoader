@@ -8,10 +8,10 @@ using System.IO;
 using System.Reflection;
 
 [DebuggerDisplay("{Name,nq}")]
-public class ScannerFont
+public class Font
 {
     #region Init
-    public ScannerFont(string fontName, Assembly fontAssembly)
+    public Font(string fontName, Assembly fontAssembly)
     {
         Name = fontName;
         ProgressTable = FillProgressTable(fontAssembly);
@@ -27,16 +27,14 @@ public class ScannerFont
         string[] ResourceNames = fontAssembly.GetManifestResourceNames();
 
         foreach (string ResourceName in ResourceNames)
-        {
-            if (!TryParseProgressFontResource(ResourceName, out char Character))
-                continue;
+            if (TryParseProgressFontResource(ResourceName, out char Character))
+            {
+                Stream PageBitmapStream = fontAssembly.GetManifestResourceStream(ResourceName);
+                using Bitmap PageBitmap = new(PageBitmapStream);
+                FontPixelArray Array = FontPixelArray.FromBitmap(PageBitmap);
 
-            Stream PageBitmapStream = fontAssembly.GetManifestResourceStream(ResourceName);
-            using Bitmap PageBitmap = new(PageBitmapStream);
-            FontPixelArray Array = FontPixelArray.FromBitmap(PageBitmap);
-
-            ProgressTable.Add(Character, Array);
-        }
+                ProgressTable.Add(Character, Array);
+            }
 
         return ProgressTable;
     }
@@ -46,17 +44,13 @@ public class ScannerFont
         character = '\0';
 
         string[] Splitted = resourceName.Split('.');
-        if (Splitted.Length < 3)
-            return false;
+        Debug.Assert(Splitted.Length >= 3);
 
         if (Splitted[Splitted.Length - 3] != "PageResources")
             return false;
 
         string CharacterString = Splitted[Splitted.Length - 2];
         string Extension = Splitted[Splitted.Length - 1];
-
-        if (Extension != "png")
-            return false;
 
         if (!CharacterString.StartsWith("Page"))
             return false;
@@ -70,6 +64,9 @@ public class ScannerFont
         else
             return false;
 
+        if (Extension != "png")
+            return false;
+
         return true;
     }
 
@@ -79,15 +76,13 @@ public class ScannerFont
         string[] ResourceNames = fontAssembly.GetManifestResourceNames();
 
         foreach (string ResourceName in ResourceNames)
-        {
-            if (!TryParseFontResource(ResourceName, out double FontSize, out bool IsBlue, out bool IsItalic, out bool IsBold))
-                continue;
+            if (TryParseFontResource(ResourceName, out double FontSize, out bool IsBlue, out bool IsItalic, out bool IsBold))
+            {
+                LetterType FontLetterType = new(FontSize, IsBlue, IsItalic, IsBold);
+                Stream FontBitmapStream = fontAssembly.GetManifestResourceStream(ResourceName);
 
-            LetterType FontLetterType = new(FontSize, IsBlue, IsItalic, IsBold);
-            Stream FontBitmapStream = fontAssembly.GetManifestResourceStream(ResourceName);
-
-            StreamTable.Add(FontLetterType, FontBitmapStream);
-        }
+                StreamTable.Add(FontLetterType, FontBitmapStream);
+            }
 
         return new FontBitmap(StreamTable);
     }
@@ -111,7 +106,25 @@ public class ScannerFont
         string LetterTypeString = Splitted[Splitted.Length - 2];
         string Extension = Splitted[Splitted.Length - 1];
 
-        if (Extension != "png")
+        while (FontSizeString.StartsWith("_") || FontSizeString.StartsWith("0"))
+            FontSizeString = FontSizeString.Substring(1);
+        FontSizeString = FontSizeString.Replace("x", ".");
+
+        if (!double.TryParse(FontSizeString, NumberStyles.Float, CultureInfo.InvariantCulture, out fontSize))
+            return false;
+
+        if (fontSize < LetterType.MinFontSize)
+            return false;
+
+        if (FontColorString == "blue")
+        {
+            isBlue = true;
+        }
+        else if (FontColorString == "black")
+        {
+            isBlue = false;
+        }
+        else
             return false;
 
         if (LetterTypeString == "normal")
@@ -137,22 +150,7 @@ public class ScannerFont
         else
             return false;
 
-        if (FontColorString == "blue")
-        {
-            isBlue = true;
-        }
-        else if (FontColorString == "black")
-        {
-            isBlue = false;
-        }
-        else
-            return false;
-
-        while (FontSizeString.StartsWith("_") || FontSizeString.StartsWith("0"))
-            FontSizeString = FontSizeString.Substring(1);
-        FontSizeString = FontSizeString.Replace("x", ".");
-
-        if (!double.TryParse(FontSizeString, NumberStyles.Float, CultureInfo.InvariantCulture, out fontSize) || fontSize < LetterType.MinFontSize)
+        if (Extension != "png")
             return false;
 
         return true;

@@ -18,5 +18,8 @@ public class TestFontPixelArray
 
         FontPixelArray TestPixelArray = FontPixelArray.FromBitmap(TestBitmap);
         TestPixelArray.DebugPrint();
+
+        FontPixelArray TestClipped = TestPixelArray.Clipped();
+        Assert.IsTrue(TestClipped.IsClipped);
     }
 }
