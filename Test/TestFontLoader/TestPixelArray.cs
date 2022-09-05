@@ -40,6 +40,23 @@ public class TestPixelArray
         TestPixelArray.SetColoredCountColumn(0, 1);
         ColoredCount = TestPixelArray.GetColoredCountColumn(0);
         Assert.AreEqual(1, ColoredCount);
+
+        Rectangle Rect = new(0, 0, TestBitmap.Width, TestBitmap.Height);
+
+        PixelArray TestPixelArray2 = PixelArray.FromBitmap(TestBitmap, Rect);
+        Assert.AreEqual(TestPixelArray2.Width, TestPixelArray.Width);
+        Assert.AreEqual(TestPixelArray2.Height, TestPixelArray.Height);
+        Assert.AreEqual(TestPixelArray2.Baseline, TestPixelArray.Baseline);
+
+        PixelArray TestPixelArray3 = PixelArray.FromBitmap(TestBitmap, 1);
+        Assert.AreEqual(TestPixelArray3.Width, TestPixelArray.Width);
+        Assert.AreEqual(TestPixelArray3.Height, TestPixelArray.Height);
+        Assert.AreEqual(TestPixelArray3.Baseline, TestPixelArray.Baseline);
+
+        PixelArray TestPixelArray4 = PixelArray.FromBitmap(TestBitmap, Rect, 1);
+        Assert.AreEqual(TestPixelArray4.Width, TestPixelArray.Width);
+        Assert.AreEqual(TestPixelArray4.Height, TestPixelArray.Height);
+        Assert.AreEqual(TestPixelArray4.Baseline, TestPixelArray.Baseline);
     }
 
     [Test]

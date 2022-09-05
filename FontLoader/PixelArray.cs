@@ -82,6 +82,11 @@ public class PixelArray
         return FromBitmap(bitmap, new Rectangle(0, 0, bitmap.Width, bitmap.Height), baselineDiff);
     }
 
+    public static PixelArray FromBitmap(Bitmap bitmap, Rectangle rect)
+    {
+        return FromBitmap(bitmap, rect, 1);
+    }
+
     public static PixelArray FromBitmap(Bitmap bitmap, Rectangle rect, int baselineDiff)
     {
         int Width = bitmap.Width;
