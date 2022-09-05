@@ -25,6 +25,7 @@
     <None Remove="Black.png" />
     <None Remove="Large.png" />
     <None Remove="Long.png" />
+    <None Remove="Big.png" />
     <None Remove="Mixed.png" />
     <None Remove="White.png" />
     <None Remove="FakeResource.txt" />
@@ -37,6 +38,7 @@
     <EmbeddedResource Include="Black.png" />
     <EmbeddedResource Include="Large.png" />
     <EmbeddedResource Include="Long.png" />
+    <EmbeddedResource Include="Big.png" />
     <EmbeddedResource Include="Mixed.png" />
     <EmbeddedResource Include="White.png" />
     <EmbeddedResource Include="FakeResource.txt" />

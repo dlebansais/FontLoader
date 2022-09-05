@@ -207,6 +207,29 @@ public class TestPixelArrayHelper
 
         IsMatch = PixelArrayHelper.IsLeftMatch(LongPixelArray2, MixedPixelArray, 0, out _);
         Assert.IsFalse(IsMatch);
+
+        IsMatch = PixelArrayHelper.IsLeftMatch(MixedPixelArray, LongPixelArray2, 0, out _);
+        Assert.IsTrue(IsMatch);
+
+        PixelArray LongPixelArray3 = PixelArray.FromBitmap(LongBitmap);
+        for (int x = 0; x < MixedPixelArray.Width; x++)
+            for (int y = 0; y < MixedPixelArray.Height; y++)
+            {
+                byte Pixel = MixedPixelArray.GetPixel(x, y);
+                LongPixelArray3.SetPixel(x, y, Pixel);
+            }
+        for (int x = MixedPixelArray.Width; x < LongPixelArray3.Width; x++)
+        {
+            for (int y = 0; y < MixedPixelArray.Height; y++)
+            {
+                LongPixelArray3.ClearPixel(x, y);
+            }
+
+            LongPixelArray3.SetWhiteColumn(x, true);
+        }
+
+        IsMatch = PixelArrayHelper.IsLeftMatch(LongPixelArray3, MixedPixelArray, 0, out _);
+        Assert.IsTrue(IsMatch);
     }
 
     [Test]
@@ -235,6 +258,51 @@ public class TestPixelArrayHelper
         IsMatch = PixelArrayHelper.IsLeftDiagonalMatch(BlackPixelArray, 0, 0, BlackPixelArray, 0);
         Assert.IsTrue(IsMatch);
 
+        PixelArray BlackPixelArray2 = PixelArray.FromBitmap(BlackBitmap);
+        for (int x = 0; x < BlackPixelArray.Width; x++)
+            for (int y = 0; y < BlackPixelArray.Height; y++)
+            {
+                BlackPixelArray2.SetPixel(x, y, 0x80);
+            }
+
+        IsMatch = PixelArrayHelper.IsLeftDiagonalMatch(BlackPixelArray, 0.5, 1, BlackPixelArray2, 0);
+        Assert.IsFalse(IsMatch);
+
+        PixelArray BlackPixelArray3 = PixelArray.FromBitmap(BlackBitmap);
+        for (int x = 0; x < BlackPixelArray.Width; x++)
+            for (int y = 0; y < BlackPixelArray.Height; y++)
+            {
+                byte Pixel = BlackPixelArray.GetPixel(x, y);
+                BlackPixelArray3.SetPixel(x, y, (byte)(Pixel + 1));
+            }
+
+        IsMatch = PixelArrayHelper.IsLeftDiagonalMatch(BlackPixelArray, 0.5, BlackPixelArray.Width, BlackPixelArray3, 0);
+        Assert.IsFalse(IsMatch);
+
+        PixelArray BlackPixelArray4 = PixelArray.FromBitmap(BlackBitmap, 2);
+        for (int x = 0; x < BlackPixelArray.Width; x++)
+            for (int y = 0; y < BlackPixelArray.Height; y++)
+            {
+                BlackPixelArray4.SetPixel(x, y, 0x80);
+            }
+
+        IsMatch = PixelArrayHelper.IsLeftDiagonalMatch(BlackPixelArray, 0.5, 1, BlackPixelArray4, 0);
+        Assert.IsFalse(IsMatch);
+
+        PixelArray BlackPixelArray5 = PixelArray.FromBitmap(BlackBitmap, 2);
+        for (int x = 0; x < BlackPixelArray.Width; x++)
+            for (int y = 0; y < BlackPixelArray.Height; y++)
+            {
+                byte Pixel = BlackPixelArray.GetPixel(x, y);
+                BlackPixelArray5.SetPixel(x, y, (byte)(Pixel + 1));
+            }
+
+        IsMatch = PixelArrayHelper.IsLeftDiagonalMatch(BlackPixelArray, 0.5, 1, BlackPixelArray5, 0);
+        Assert.IsFalse(IsMatch);
+
+        IsMatch = PixelArrayHelper.IsLeftDiagonalMatch(BlackPixelArray5, 0.5, 1, BlackPixelArray, 0);
+        Assert.IsFalse(IsMatch);
+
         IsMatch = PixelArrayHelper.IsLeftDiagonalMatch(MixedPixelArray, 0, 0, MixedPixelArray, 0);
         Assert.IsTrue(IsMatch);
 
@@ -254,6 +322,26 @@ public class TestPixelArrayHelper
 
         IsMatch = PixelArrayHelper.IsLeftDiagonalMatch(LongPixelArray2, 0, 0, MixedPixelArray, 0);
         Assert.IsFalse(IsMatch);
+
+        PixelArray LongPixelArray3 = PixelArray.FromBitmap(LongBitmap);
+        for (int x = 0; x < MixedPixelArray.Width; x++)
+            for (int y = 0; y < MixedPixelArray.Height; y++)
+            {
+                byte Pixel = MixedPixelArray.GetPixel(x, y);
+                LongPixelArray3.SetPixel(x, y, Pixel);
+            }
+        for (int x = MixedPixelArray.Width; x < LongPixelArray3.Width; x++)
+        {
+            for (int y = 0; y < MixedPixelArray.Height; y++)
+            {
+                LongPixelArray3.ClearPixel(x, y);
+            }
+
+            LongPixelArray3.SetWhiteColumn(x, true);
+        }
+
+        IsMatch = PixelArrayHelper.IsLeftDiagonalMatch(LongPixelArray3, 0, 0, MixedPixelArray, 0);
+        Assert.IsTrue(IsMatch);
     }
 
     [Test]
@@ -282,7 +370,13 @@ public class TestPixelArrayHelper
         IsMatch = PixelArrayHelper.IsRightMatch(BlackPixelArray, BlackPixelArray, 0);
         Assert.IsTrue(IsMatch);
 
-        IsMatch = PixelArrayHelper.IsRightMatch(BlackPixelArray, MixedPixelArray, 0);
+        IsMatch = PixelArrayHelper.IsRightMatch(MixedPixelArray, BlackPixelArray, 0);
+        Assert.IsFalse(IsMatch);
+
+        IsMatch = PixelArrayHelper.IsRightMatch(LargePixelArray, MixedPixelArray, 0);
+        Assert.IsFalse(IsMatch);
+
+        IsMatch = PixelArrayHelper.IsRightMatch(MixedPixelArray, LargePixelArray, 0);
         Assert.IsFalse(IsMatch);
 
         IsMatch = PixelArrayHelper.IsRightMatch(LongPixelArray, MixedPixelArray, 0);
@@ -324,11 +418,31 @@ public class TestPixelArrayHelper
             for (int y = 0; y < MixedPixelArray.Height; y++)
             {
                 byte Pixel = MixedPixelArray.GetPixel(x, y);
-                LongPixelArray2.SetPixel(x, y, Pixel);
+                LongPixelArray2.SetPixel(LongPixelArray2.Width - MixedPixelArray.Width + x, y, Pixel);
             }
 
         IsMatch = PixelArrayHelper.IsRightMatch(LongPixelArray2, MixedPixelArray, 0);
         Assert.IsFalse(IsMatch);
+
+        PixelArray LongPixelArray3 = PixelArray.FromBitmap(LongBitmap);
+        for (int x = 0; x < MixedPixelArray.Width; x++)
+            for (int y = 0; y < MixedPixelArray.Height; y++)
+            {
+                byte Pixel = MixedPixelArray.GetPixel(x, y);
+                LongPixelArray3.SetPixel(LongPixelArray3.Width - MixedPixelArray.Width + x, y, Pixel);
+            }
+        for (int x = 0; x < MixedPixelArray.Width; x++)
+        {
+            for (int y = 0; y < MixedPixelArray.Height; y++)
+            {
+                LongPixelArray3.ClearPixel(x, y);
+            }
+
+            LongPixelArray3.SetWhiteColumn(x, true);
+        }
+
+        IsMatch = PixelArrayHelper.IsRightMatch(LongPixelArray3, MixedPixelArray, 0);
+        Assert.IsTrue(IsMatch);
     }
 
     [Test]
@@ -357,6 +471,7 @@ public class TestPixelArrayHelper
     public void MergeTest()
     {
         Assembly TestAssembly = Assembly.GetExecutingAssembly();
+
         Stream TestBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestPixelArray).Namespace}.Mixed.png");
         Bitmap TestBitmap = new Bitmap(TestBitmapStream);
         PixelArray TestPixelArray = PixelArray.FromBitmap(TestBitmap);
@@ -390,6 +505,16 @@ public class TestPixelArrayHelper
         MergedPixelArray = PixelArrayHelper.Merge(TestPixelArray, LargePixelArray, 1);
         Assert.AreEqual(TestPixelArray.Width + LargePixelArray.Width - 1, MergedPixelArray.Width);
         Assert.AreEqual(LargePixelArray.Height, MergedPixelArray.Height);
+
+        Stream BigBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestPixelArray).Namespace}.Big.png");
+        Bitmap BigBitmap = new Bitmap(BigBitmapStream);
+        PixelArray BigPixelArray = PixelArray.FromBitmap(BigBitmap);
+
+        PixelArray TestPixelArray2 = PixelArray.FromBitmap(TestBitmap, 2);
+
+        MergedPixelArray = PixelArrayHelper.Merge(TestPixelArray2, BigPixelArray, 1);
+        Assert.AreEqual(TestPixelArray2.Width + BigPixelArray.Width - 1, MergedPixelArray.Width);
+        Assert.AreEqual(BigPixelArray.Height + 1, MergedPixelArray.Height);
     }
 
     [Test]

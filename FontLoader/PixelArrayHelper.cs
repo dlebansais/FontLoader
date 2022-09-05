@@ -66,6 +66,9 @@ public static class PixelArrayHelper
                 return;
             }
         }
+        else
+        {
+        }
 
         if (x >= TotalWidth - p2.Width)
         {
@@ -75,6 +78,9 @@ public static class PixelArrayHelper
             {
                 CopyPixel(p2, x - TotalWidth + p2.Width, y - OffsetY, Result, x, y, ref isWhite, ref coloredCount);
                 return;
+            }
+            else
+            {
             }
         }
 
@@ -192,6 +198,9 @@ public static class PixelArrayHelper
                     }
 
                 Debug.Assert(p1.IsWhiteColumn(x));
+            }
+            else
+            {
             }
         }
 
