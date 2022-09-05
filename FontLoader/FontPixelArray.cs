@@ -17,7 +17,13 @@ public class FontPixelArray
         Width = 0;
         Height = 0;
         Baseline = 0;
+
+#if MULTIDIM
         Array = new byte[0, 0];
+#else
+        Array = new byte[0];
+#endif
+
         WhiteColumn = new bool[0];
         ColoredCountColumn = new int[0];
     }
@@ -28,7 +34,12 @@ public class FontPixelArray
         Height = height;
         Baseline = baseline;
 
+#if MULTIDIM
         Array = new byte[Width, Height];
+#else
+        Array = new byte[Width * Height];
+#endif
+
         WhiteColumn = new bool[Width];
         ColoredCountColumn = new int[Width];
     }
@@ -39,7 +50,12 @@ public class FontPixelArray
         Height = height;
         Baseline = baseline;
 
+#if MULTIDIM
         Array = new byte[Width, Height];
+#else
+        Array = new byte[Width * Height];
+#endif
+
         WhiteColumn = new bool[Width];
         ColoredCountColumn = new int[Width];
 
@@ -63,7 +79,11 @@ public class FontPixelArray
                 else
                     Pixel = (byte)((R + G + B) / 3);
 
+#if MULTIDIM
                 Array[x, y] = Pixel;
+#else
+                Array[x + y * Width] = Pixel;
+#endif
 
                 if (Pixel != 0xFF)
                 {
@@ -109,28 +129,49 @@ public class FontPixelArray
     public int Height { get; }
     public int Baseline { get; }
 
+#if MULTIDIM
     private byte[,] Array;
+#else
+    private byte[] Array;
+#endif
+
     private bool[] WhiteColumn;
     private int[] ColoredCountColumn;
 
     public byte GetPixel(int x, int y)
     {
+#if MULTIDIM
         return Array[x, y];
+#else
+        return Array[x + y * Width];
+#endif
     }
 
     public void SetPixel(int x, int y, byte value)
     {
+#if MULTIDIM
         Array[x, y] = value;
+#else
+        Array[x + y * Width] = value;
+#endif
     }
 
     public void ClearPixel(int x, int y)
     {
+#if MULTIDIM
         Array[x, y] = 0xFF;
+#else
+        Array[x + y * Width] = 0xFF;
+#endif
     }
 
     public bool IsWhite(int x, int y)
     {
+#if MULTIDIM
         return Array[x, y] == 0xFF;
+#else
+        return Array[x + y * Width] == 0xFF;
+#endif
     }
 
     public bool IsWhiteColumn(int x)
@@ -155,7 +196,11 @@ public class FontPixelArray
 
     public bool IsColored(int x, int y, out byte color)
     {
+#if MULTIDIM
         color = Array[x, y];
+#else
+        color = Array[x + y * Width];
+#endif
 
         bool IsWhite = color == 0xFF;
         bool IsBlack = color == 0;
@@ -166,9 +211,14 @@ public class FontPixelArray
 
     private static void CopyPixel(FontPixelArray p1, int x1, int y1, FontPixelArray p2, int x2, int y2, ref bool isWhite, ref int coloredCount)
     {
+#if MULTIDIM
         byte Pixel = p1.Array[x1, y1];
-
         p2.Array[x2, y2] = Pixel;
+#else
+        byte Pixel = p1.Array[x1 + y1 * p1.Width];
+        p2.Array[x2 + y2 * p2.Width] = Pixel;
+#endif
+
         UpdatePixelFlags(Pixel, ref isWhite, ref coloredCount);
     }
 
@@ -368,7 +418,12 @@ public class FontPixelArray
 
             for (int x = 0; x < Width; x++)
             {
+#if MULTIDIM
                 uint RGB = Array[x, y];
+#else
+                uint RGB = Array[x + y * Width];
+#endif
+
                 uint Pixel = (((RGB >> 0) & 0xFF) + ((RGB >> 8) & 0xFF) + ((RGB >> 16) & 0xFF)) / 3;
                 Line += Pixel < 0x40 ? "X" : (y == Baseline ? "." : " ");
             }
