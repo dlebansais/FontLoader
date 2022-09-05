@@ -30,6 +30,137 @@ public class TestPixelArrayHelper
     }
 
     [Test]
+    public void IsPixelToPixelMatchTest()
+    {
+        Assembly TestAssembly = Assembly.GetExecutingAssembly();
+
+        Stream LongBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestPixelArray).Namespace}.Long.png");
+        Bitmap LongBitmap = new Bitmap(LongBitmapStream);
+        PixelArray LongPixelArray = PixelArray.FromBitmap(LongBitmap);
+
+        Stream LargeBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestPixelArray).Namespace}.Large.png");
+        Bitmap LargeBitmap = new Bitmap(LargeBitmapStream);
+        PixelArray LargePixelArray = PixelArray.FromBitmap(LargeBitmap);
+
+        Stream BlackBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestPixelArray).Namespace}.Black.png");
+        Bitmap BlackBitmap = new Bitmap(BlackBitmapStream);
+        PixelArray BlackPixelArray = PixelArray.FromBitmap(BlackBitmap);
+
+        Stream MixedBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestPixelArray).Namespace}.Mixed.png");
+        Bitmap MixedBitmap = new Bitmap(MixedBitmapStream);
+        PixelArray MixedPixelArray = PixelArray.FromBitmap(MixedBitmap);
+
+        bool IsMatch;
+
+        IsMatch = PixelArrayHelper.IsPixelToPixelMatch(LongPixelArray, MixedPixelArray);
+        Assert.IsFalse(IsMatch);
+
+        IsMatch = PixelArrayHelper.IsPixelToPixelMatch(LargePixelArray, MixedPixelArray);
+        Assert.IsFalse(IsMatch);
+
+        IsMatch = PixelArrayHelper.IsPixelToPixelMatch(BlackPixelArray, MixedPixelArray);
+        Assert.IsFalse(IsMatch);
+
+        IsMatch = PixelArrayHelper.IsPixelToPixelMatch(BlackPixelArray, BlackPixelArray);
+        Assert.IsTrue(IsMatch);
+
+        PixelArray BlackPixelArray2 = PixelArray.FromBitmap(BlackBitmap);
+        BlackPixelArray2.SetPixel(0, 0, (byte)(BlackPixelArray.GetPixel(0, 0) + 1));
+
+        IsMatch = PixelArrayHelper.IsPixelToPixelMatch(BlackPixelArray, BlackPixelArray2);
+        Assert.IsFalse(IsMatch);
+    }
+
+    [Test]
+    public void IsLeftMatchTest()
+    {
+        Assembly TestAssembly = Assembly.GetExecutingAssembly();
+
+        Stream BlackBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestPixelArray).Namespace}.Black.png");
+        Bitmap BlackBitmap = new Bitmap(BlackBitmapStream);
+        PixelArray BlackPixelArray = PixelArray.FromBitmap(BlackBitmap);
+
+        Stream LongBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestPixelArray).Namespace}.Long.png");
+        Bitmap LongBitmap = new Bitmap(LongBitmapStream);
+        PixelArray LongPixelArray = PixelArray.FromBitmap(LongBitmap);
+
+        Stream MixedBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestPixelArray).Namespace}.Mixed.png");
+        Bitmap MixedBitmap = new Bitmap(MixedBitmapStream);
+        PixelArray MixedPixelArray = PixelArray.FromBitmap(MixedBitmap);
+
+        bool IsMatch;
+        int FirstDiffX;
+
+        IsMatch = PixelArrayHelper.IsLeftMatch(BlackPixelArray, BlackPixelArray, 0, out FirstDiffX);
+        Assert.IsTrue(IsMatch);
+        Assert.AreEqual(-1, FirstDiffX);
+
+        IsMatch = PixelArrayHelper.IsLeftMatch(BlackPixelArray, MixedPixelArray, 0, out _);
+        Assert.IsFalse(IsMatch);
+
+        IsMatch = PixelArrayHelper.IsLeftMatch(LongPixelArray, MixedPixelArray, 0, out _);
+        Assert.IsTrue(IsMatch);
+
+        IsMatch = PixelArrayHelper.IsLeftMatch(MixedPixelArray, LongPixelArray, 0, out _);
+        Assert.IsTrue(IsMatch);
+    }
+
+    [Test]
+    public void IsLeftDiagonalMatchTest()
+    {
+        Assembly TestAssembly = Assembly.GetExecutingAssembly();
+
+        Stream BlackBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestPixelArray).Namespace}.Black.png");
+        Bitmap BlackBitmap = new Bitmap(BlackBitmapStream);
+        PixelArray BlackPixelArray = PixelArray.FromBitmap(BlackBitmap);
+
+        Stream LongBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestPixelArray).Namespace}.Long.png");
+        Bitmap LongBitmap = new Bitmap(LongBitmapStream);
+        PixelArray LongPixelArray = PixelArray.FromBitmap(LongBitmap);
+
+        Stream MixedBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestPixelArray).Namespace}.Mixed.png");
+        Bitmap MixedBitmap = new Bitmap(MixedBitmapStream);
+        PixelArray MixedPixelArray = PixelArray.FromBitmap(MixedBitmap);
+
+        bool IsMatch;
+
+        IsMatch = PixelArrayHelper.IsLeftDiagonalMatch(BlackPixelArray, 0, 0, BlackPixelArray, 0);
+        Assert.IsTrue(IsMatch);
+    }
+
+    [Test]
+    public void IsRightMatchTest()
+    {
+        Assembly TestAssembly = Assembly.GetExecutingAssembly();
+
+        Stream BlackBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestPixelArray).Namespace}.Black.png");
+        Bitmap BlackBitmap = new Bitmap(BlackBitmapStream);
+        PixelArray BlackPixelArray = PixelArray.FromBitmap(BlackBitmap);
+
+        Stream LongBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestPixelArray).Namespace}.Long.png");
+        Bitmap LongBitmap = new Bitmap(LongBitmapStream);
+        PixelArray LongPixelArray = PixelArray.FromBitmap(LongBitmap);
+
+        Stream MixedBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestPixelArray).Namespace}.Mixed.png");
+        Bitmap MixedBitmap = new Bitmap(MixedBitmapStream);
+        PixelArray MixedPixelArray = PixelArray.FromBitmap(MixedBitmap);
+
+        bool IsMatch;
+
+        IsMatch = PixelArrayHelper.IsRightMatch(BlackPixelArray, BlackPixelArray, 0);
+        Assert.IsTrue(IsMatch);
+
+        IsMatch = PixelArrayHelper.IsRightMatch(BlackPixelArray, MixedPixelArray, 0);
+        Assert.IsFalse(IsMatch);
+
+        IsMatch = PixelArrayHelper.IsRightMatch(LongPixelArray, MixedPixelArray, 0);
+        Assert.IsFalse(IsMatch);
+
+        IsMatch = PixelArrayHelper.IsRightMatch(MixedPixelArray, LongPixelArray, 0);
+        Assert.IsFalse(IsMatch);
+    }
+
+    [Test]
     public void IsCompatibleTest()
     {
         Assembly TestAssembly = Assembly.GetExecutingAssembly();

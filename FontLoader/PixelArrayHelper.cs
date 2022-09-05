@@ -134,37 +134,6 @@ public static class PixelArrayHelper
         return true;
     }
 
-    public static void ProfileMatch(PixelArray p1, PixelArray p2)
-    {
-        int Width = p1.Width;
-        int Height = p1.Height;
-
-        for (int y = 0; y < Height; y++)
-        {
-            string Line = string.Empty;
-
-            for (int x = 0; x < Width; x++)
-            {
-                uint RGB1 = p1.GetPixel(x, y);
-                uint RGB2 = p2.GetPixel(x, y);
-
-                int n = (int)RGB1 - (int)RGB2;
-
-                char c;
-                if (n == 0)
-                    c = ' ';
-                else if (n > 0)
-                    c = n <= 9 ? (char)('A' + n) : 'x';
-                else
-                    c = n >= -9 ? (char)('a' - n) : 'x';
-
-                Line += c;
-            }
-
-            Debug.WriteLine(Line);
-        }
-    }
-
     public static bool IsLeftMatch(PixelArray p1, PixelArray p2, int verticalOffset, out int firstDiffX)
     {
         int Baseline1 = p1.Baseline;
