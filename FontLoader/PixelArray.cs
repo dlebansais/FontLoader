@@ -74,14 +74,19 @@ public class PixelArray
 
     public static PixelArray FromBitmap(Bitmap bitmap)
     {
-        return FromBitmap(bitmap, new Rectangle(0, 0, bitmap.Width, bitmap.Height));
+        return FromBitmap(bitmap, new Rectangle(0, 0, bitmap.Width, bitmap.Height), 1);
     }
 
-    public static PixelArray FromBitmap(Bitmap bitmap, Rectangle rect)
+    public static PixelArray FromBitmap(Bitmap bitmap, int baselineDiff)
+    {
+        return FromBitmap(bitmap, new Rectangle(0, 0, bitmap.Width, bitmap.Height), baselineDiff);
+    }
+
+    public static PixelArray FromBitmap(Bitmap bitmap, Rectangle rect, int baselineDiff)
     {
         int Width = bitmap.Width;
         int Height = bitmap.Height;
-        int Baseline = Height - 1;
+        int Baseline = Height - baselineDiff;
 
         Rectangle FullRect = new Rectangle(0, 0, Width, Height);
         BitmapData Data = bitmap.LockBits(FullRect, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);

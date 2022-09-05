@@ -93,11 +93,12 @@ public static class PixelArrayHelper
         int Height = p1.Height;
 
         int BaselineDifference = p2.Baseline - p1.Baseline + verticalOffset;
-        if (Math.Abs(BaselineDifference) > 0)
-                return false;
+        if (BaselineDifference != 0)
+            return false;
 
         int DiffTotal = 0;
-        int MaxSupportedDiff = (int)((Width * Height) * MaxSuportedDiffRatio);
+        //int MaxSupportedDiff = (int)((Width * Height) * MaxSuportedDiffRatio);
+        int MaxSupportedDiff = 5;
 
         for (int x = 0; x < Width; x++)
             for (int y = 0; y < Height; y++)
@@ -144,7 +145,9 @@ public static class PixelArrayHelper
         int Height = Baseline + Math.Max(p1.Height - Baseline1, p2.Height - Baseline2);
 
         int DiffTotal = 0;
-        int MaxSupportedDiff = (int)((Width * Height) * MaxSuportedDiffRatio);
+        //int MaxSupportedDiff = (int)((Width * Height) * MaxSuportedDiffRatio);
+        int MaxSupportedDiff = 5;
+
         firstDiffX = -1;
 
         for (int x = 0; x < Width; x++)
