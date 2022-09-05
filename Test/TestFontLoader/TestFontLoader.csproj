@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <None Remove="Black.png" />
+    <None Remove="Large.png" />
     <None Remove="Mixed.png" />
     <None Remove="White.png" />
     <None Remove="FakeResource.txt" />
@@ -33,6 +34,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Black.png" />
+    <EmbeddedResource Include="Large.png" />
     <EmbeddedResource Include="Mixed.png" />
     <EmbeddedResource Include="White.png" />
     <EmbeddedResource Include="FakeResource.txt" />
