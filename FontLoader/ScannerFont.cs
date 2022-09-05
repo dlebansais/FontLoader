@@ -21,9 +21,9 @@ public class Font
         CharacterTable = FillCharacterTable(Bitmap, CellTable);
     }
 
-    private Dictionary<char, FontPixelArray> FillProgressTable(Assembly fontAssembly)
+    private Dictionary<char, PixelArray> FillProgressTable(Assembly fontAssembly)
     {
-        Dictionary<char, FontPixelArray> ProgressTable = new();
+        Dictionary<char, PixelArray> ProgressTable = new();
         string[] ResourceNames = fontAssembly.GetManifestResourceNames();
 
         foreach (string ResourceName in ResourceNames)
@@ -31,7 +31,7 @@ public class Font
             {
                 Stream PageBitmapStream = fontAssembly.GetManifestResourceStream(ResourceName);
                 using Bitmap PageBitmap = new(PageBitmapStream);
-                FontPixelArray Array = FontPixelArray.FromBitmap(PageBitmap);
+                PixelArray Array = PixelArray.FromBitmap(PageBitmap);
 
                 ProgressTable.Add(Character, Array);
             }
@@ -236,9 +236,9 @@ public class Font
         fontCellTable.Add(new Letter(character, LetterType.ItalicBold), bitmapCell);
     }
 
-    private Dictionary<Letter, FontPixelArray> FillCharacterTable(FontBitmap bitmap, Dictionary<Letter, FontBitmapCell> cellTable)
+    private Dictionary<Letter, PixelArray> FillCharacterTable(FontBitmap bitmap, Dictionary<Letter, FontBitmapCell> cellTable)
     {
-        Dictionary<Letter, FontPixelArray> CharacterTable = new();
+        Dictionary<Letter, PixelArray> CharacterTable = new();
         bool[,] CellTaken = new bool[bitmap.Columns, bitmap.Rows];
 
         foreach (KeyValuePair<Letter, FontBitmapCell> Entry in cellTable)
@@ -271,20 +271,20 @@ public class Font
         return CharacterTable;
     }
 
-    private void AddLetter(FontBitmap bitmap, int column, int row, Dictionary<Letter, FontPixelArray> characterTable, Letter letter)
+    private void AddLetter(FontBitmap bitmap, int column, int row, Dictionary<Letter, PixelArray> characterTable, Letter letter)
     {
         foreach (LetterType Key in bitmap.SupportedLetterTypes)
             if (LetterType.IsSameType(Key, letter.LetterType))
             {
-                FontPixelArray CellArray = bitmap.GetPixelArray(column, row, Key);
+                PixelArray CellArray = bitmap.GetPixelArray(column, row, Key);
                 CellArray = CellArray.Clipped();
 
-                if (CellArray != FontPixelArray.Empty)
+                if (CellArray != PixelArray.Empty)
                     AddLetter(characterTable, letter, Key.FontSize, Key.IsBlue, CellArray);
             }
     }
 
-    private void AddLetter(Dictionary<Letter, FontPixelArray> characterTable, Letter letter, double fontSize, bool isBlue, FontPixelArray cellArray)
+    private void AddLetter(Dictionary<Letter, PixelArray> characterTable, Letter letter, double fontSize, bool isBlue, PixelArray cellArray)
     {
         LetterType NewLetterType = LetterType.WithSizeAndColor(letter.LetterType, fontSize, isBlue);
         Letter NewLetter = new(letter, NewLetterType);
@@ -292,7 +292,7 @@ public class Font
         characterTable.Add(NewLetter, cellArray);
     }
 
-    private void AddLetter(FontBitmap bitmap, int column, int row, Dictionary<Letter, FontPixelArray> characterTable, char character)
+    private void AddLetter(FontBitmap bitmap, int column, int row, Dictionary<Letter, PixelArray> characterTable, char character)
     {
         foreach (LetterType Key in bitmap.SupportedLetterTypes)
         {
@@ -300,10 +300,10 @@ public class Font
 
             if (!characterTable.ContainsKey(Letter))
             {
-                FontPixelArray CellArray = bitmap.GetPixelArray(column, row, Key);
+                PixelArray CellArray = bitmap.GetPixelArray(column, row, Key);
                 CellArray = CellArray.Clipped();
 
-                if (CellArray != FontPixelArray.Empty)
+                if (CellArray != PixelArray.Empty)
                     characterTable.Add(Letter, CellArray);
             }
         }
@@ -312,7 +312,7 @@ public class Font
 
     #region Properties
     public string Name { get; }
-    public Dictionary<char, FontPixelArray> ProgressTable { get; }
-    public Dictionary<Letter, FontPixelArray> CharacterTable { get; }
+    public Dictionary<char, PixelArray> ProgressTable { get; }
+    public Dictionary<Letter, PixelArray> CharacterTable { get; }
     #endregion
 }

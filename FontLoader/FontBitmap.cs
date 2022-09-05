@@ -83,7 +83,7 @@ public class FontBitmap
     public int Rows { get; }
     public List<LetterType> SupportedLetterTypes { get; }
 
-    public FontPixelArray GetPixelArray(int column, int row, LetterType letterType)
+    public PixelArray GetPixelArray(int column, int row, LetterType letterType)
     {
         LetterTypeBitmap LetterTypeBitmap = LetterTypeBitmapTable[letterType];
 
@@ -92,7 +92,7 @@ public class FontBitmap
         int Stride = LetterTypeBitmap.Stride;
         byte[] ArgbValues = LetterTypeBitmap.ArgbValues;
 
-        return new FontPixelArray(column * CellSize, CellSize, row * CellSize, CellSize, ArgbValues, Stride, Baseline, clearEdges: true);
+        return new PixelArray(column * CellSize, CellSize, row * CellSize, CellSize, ArgbValues, Stride, Baseline, clearEdges: true);
     }
     #endregion
 

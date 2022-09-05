@@ -1,4 +1,4 @@
-﻿namespace TestFontScanner;
+﻿namespace TestFontLoader;
 
 using FontLoader;
 using NUnit.Framework;

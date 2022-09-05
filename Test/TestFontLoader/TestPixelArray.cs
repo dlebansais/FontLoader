@@ -1,4 +1,4 @@
-﻿namespace TestFontScanner;
+﻿namespace TestFontLoader;
 
 using FontLoader;
 using NUnit.Framework;
@@ -7,15 +7,15 @@ using System.IO;
 using System.Reflection;
 
 [TestFixture]
-public class TestFontPixelArray
+public class TestPixelArray
 {
     [Test]
     public void GetSetTest()
     {
         Assembly TestAssembly = Assembly.GetExecutingAssembly();
-        Stream TestBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestFontPixelArray).Namespace}.Black.png");
+        Stream TestBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestPixelArray).Namespace}.Black.png");
         Bitmap TestBitmap = new Bitmap(TestBitmapStream);
-        FontPixelArray TestPixelArray = FontPixelArray.FromBitmap(TestBitmap);
+        PixelArray TestPixelArray = PixelArray.FromBitmap(TestBitmap);
 
         byte Pixel = TestPixelArray.GetPixel(0, 0);
         Assert.AreEqual(0, Pixel);
@@ -47,27 +47,27 @@ public class TestFontPixelArray
     {
         Assembly TestAssembly = Assembly.GetExecutingAssembly();
 
-        Stream BlackBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestFontPixelArray).Namespace}.Black.png");
+        Stream BlackBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestPixelArray).Namespace}.Black.png");
         Bitmap BlackBitmap = new Bitmap(BlackBitmapStream);
-        FontPixelArray BlackPixelArray = FontPixelArray.FromBitmap(BlackBitmap);
+        PixelArray BlackPixelArray = PixelArray.FromBitmap(BlackBitmap);
         BlackPixelArray.DebugPrint();
-        FontPixelArray BlackClipped = BlackPixelArray.Clipped();
+        PixelArray BlackClipped = BlackPixelArray.Clipped();
         Assert.IsTrue(BlackClipped.IsClipped);
 
-        Stream MixedBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestFontPixelArray).Namespace}.Mixed.png");
+        Stream MixedBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestPixelArray).Namespace}.Mixed.png");
         Bitmap MixedBitmap = new Bitmap(MixedBitmapStream);
-        FontPixelArray MixedPixelArray = FontPixelArray.FromBitmap(MixedBitmap);
+        PixelArray MixedPixelArray = PixelArray.FromBitmap(MixedBitmap);
         MixedPixelArray.DebugPrint();
         Assert.IsFalse(MixedPixelArray.IsClipped);
-        FontPixelArray MixedClipped = MixedPixelArray.Clipped();
+        PixelArray MixedClipped = MixedPixelArray.Clipped();
         Assert.IsTrue(MixedClipped.IsClipped);
 
-        Stream WhiteBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestFontPixelArray).Namespace}.White.png");
+        Stream WhiteBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestPixelArray).Namespace}.White.png");
         Bitmap WhiteBitmap = new Bitmap(WhiteBitmapStream);
-        FontPixelArray WhitePixelArray = FontPixelArray.FromBitmap(WhiteBitmap);
+        PixelArray WhitePixelArray = PixelArray.FromBitmap(WhiteBitmap);
         WhitePixelArray.DebugPrint();
-        FontPixelArray WhiteClipped = WhitePixelArray.Clipped();
-        Assert.AreEqual(FontPixelArray.Empty, WhiteClipped);
+        PixelArray WhiteClipped = WhitePixelArray.Clipped();
+        Assert.AreEqual(PixelArray.Empty, WhiteClipped);
     }
 
     [Test]
@@ -75,10 +75,10 @@ public class TestFontPixelArray
     {
         Assembly TestAssembly = Assembly.GetExecutingAssembly();
 
-        Stream BlackBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestFontPixelArray).Namespace}.Mixed.png");
+        Stream BlackBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestPixelArray).Namespace}.Mixed.png");
         Bitmap BlackBitmap = new Bitmap(BlackBitmapStream);
-        FontPixelArray BlackPixelArray = FontPixelArray.FromBitmap(BlackBitmap);
-        FontPixelArray LeftSide = BlackPixelArray.GetLeftSide(1);
+        PixelArray BlackPixelArray = PixelArray.FromBitmap(BlackBitmap);
+        PixelArray LeftSide = BlackPixelArray.GetLeftSide(1);
         Assert.IsTrue(LeftSide.IsWhiteColumn(0));
     }
 
@@ -87,10 +87,10 @@ public class TestFontPixelArray
     {
         Assembly TestAssembly = Assembly.GetExecutingAssembly();
 
-        Stream BlackBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestFontPixelArray).Namespace}.Mixed.png");
+        Stream BlackBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestPixelArray).Namespace}.Mixed.png");
         Bitmap BlackBitmap = new Bitmap(BlackBitmapStream);
-        FontPixelArray BlackPixelArray = FontPixelArray.FromBitmap(BlackBitmap);
-        FontPixelArray RightSide = BlackPixelArray.GetRightSide(1);
+        PixelArray BlackPixelArray = PixelArray.FromBitmap(BlackBitmap);
+        PixelArray RightSide = BlackPixelArray.GetRightSide(1);
         Assert.IsTrue(RightSide.IsWhiteColumn(0));
     }
 }
