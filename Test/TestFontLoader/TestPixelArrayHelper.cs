@@ -424,6 +424,9 @@ public class TestPixelArrayHelper
         IsMatch = PixelArrayHelper.IsRightMatch(LongPixelArray2, MixedPixelArray, 0);
         Assert.IsFalse(IsMatch);
 
+        IsMatch = PixelArrayHelper.IsRightMatch(MixedPixelArray, LongPixelArray2, 0);
+        Assert.IsTrue(IsMatch);
+
         PixelArray LongPixelArray3 = PixelArray.FromBitmap(LongBitmap);
         for (int x = 0; x < MixedPixelArray.Width; x++)
             for (int y = 0; y < MixedPixelArray.Height; y++)

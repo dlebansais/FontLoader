@@ -44,7 +44,10 @@ public static class PixelArrayHelper
 
     private static void MergePixel(PixelArray Result, PixelArray p1, PixelArray p2, int x, int y, int TotalWidth, int Baseline, ref bool isWhite, ref int coloredCount)
     {
-        if (x >= 0 && x < p1.Width && x >= TotalWidth - p2.Width)
+        Debug.Assert(x >= 0);
+        Debug.Assert(y >= 0);
+
+        if (x < p1.Width && x >= TotalWidth - p2.Width)
         {
             int OffsetY1 = Baseline - p1.Baseline;
             int OffsetY2 = Baseline - p2.Baseline;
@@ -56,7 +59,7 @@ public static class PixelArrayHelper
             }
         }
 
-        if (x >= 0 && x < p1.Width)
+        if (x < p1.Width)
         {
             int OffsetY = Baseline - p1.Baseline;
 
@@ -66,21 +69,16 @@ public static class PixelArrayHelper
                 return;
             }
         }
-        else
-        {
-        }
 
         if (x >= TotalWidth - p2.Width)
         {
             int OffsetY = Baseline - p2.Baseline;
+            Debug.Assert(y >= OffsetY);
 
-            if (y >= OffsetY && y < OffsetY + p2.Height)
+            if (y < OffsetY + p2.Height)
             {
                 CopyPixel(p2, x - TotalWidth + p2.Width, y - OffsetY, Result, x, y, ref isWhite, ref coloredCount);
                 return;
-            }
-            else
-            {
             }
         }
 
@@ -198,9 +196,6 @@ public static class PixelArrayHelper
                     }
 
                 Debug.Assert(p1.IsWhiteColumn(x));
-            }
-            else
-            {
             }
         }
 
