@@ -5,7 +5,8 @@ using System.Diagnostics;
 
 public static class PixelArrayHelper
 {
-    public const double MaxSuportedDiffRatio = 0.2;
+    public static double MaxSuportedDiffRatio { get; set; } = 0.2;
+    public static double MaxSoftTakenPixelCount { get; set; } = 13;
 
     internal static void CopyPixel(PixelArray p1, int x1, int y1, PixelArray p2, int x2, int y2, ref bool isWhite, ref int coloredCount)
     {
@@ -238,7 +239,6 @@ public static class PixelArrayHelper
         }
 
         int SoftTakenPixelCount = 0;
-        int MaxSoftTakenPixelCount = 12;
 
         for (int x = 0; x < Width; x++)
         {
