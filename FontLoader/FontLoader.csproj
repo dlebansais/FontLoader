@@ -12,9 +12,9 @@
     <Product />
     <Description>Simple font loader</Description>
     <Copyright>Copyright © 2022 David Le Bansais</Copyright>
-    <Version>1.0.1</Version>
-    <AssemblyVersion>1.0.1.2</AssemblyVersion>
-    <FileVersion>1.0.1.2</FileVersion>
+    <Version>1.0.2</Version>
+    <AssemblyVersion>1.0.2.3</AssemblyVersion>
+    <FileVersion>1.0.2.3</FileVersion>
     <RepositoryUrl>https://github.com/dlebansais/FontLoader</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <NeutralLanguage>en-US</NeutralLanguage>

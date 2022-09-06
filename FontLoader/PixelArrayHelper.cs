@@ -73,9 +73,8 @@ public static class PixelArrayHelper
         if (x >= TotalWidth - p2.Width)
         {
             int OffsetY = Baseline - p2.Baseline;
-            Debug.Assert(y >= OffsetY);
 
-            if (y < OffsetY + p2.Height)
+            if (y >= OffsetY && y < OffsetY + p2.Height)
             {
                 CopyPixel(p2, x - TotalWidth + p2.Width, y - OffsetY, Result, x, y, ref isWhite, ref coloredCount);
                 return;

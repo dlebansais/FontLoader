@@ -343,20 +343,22 @@ public class PixelArray
         return Result;
     }
 
-    public void DebugPrint()
+    public string GetDebugString()
     {
+        string Result = string.Empty;
+
         for (int y = 0; y < Height; y++)
         {
-            string Line = string.Empty;
-
             for (int x = 0; x < Width; x++)
             {
                 uint RGB = Array[x + y * Width];
                 uint Pixel = (((RGB >> 0) & 0xFF) + ((RGB >> 8) & 0xFF) + ((RGB >> 16) & 0xFF)) / 3;
-                Line += Pixel < 0x40 ? "X" : (y == Baseline ? "." : " ");
+                Result += Pixel < 0x40 ? "X" : (y == Baseline ? "." : " ");
             }
 
-            Debug.WriteLine(Line);
+            Result += "\n";
         }
+
+        return Result;
     }
 }

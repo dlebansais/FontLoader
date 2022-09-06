@@ -67,14 +67,14 @@ public class TestPixelArray
         Stream BlackBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestPixelArray).Namespace}.Black.png");
         Bitmap BlackBitmap = new Bitmap(BlackBitmapStream);
         PixelArray BlackPixelArray = PixelArray.FromBitmap(BlackBitmap);
-        BlackPixelArray.DebugPrint();
+        _ = BlackPixelArray.GetDebugString();
         PixelArray BlackClipped = BlackPixelArray.Clipped();
         Assert.IsTrue(BlackClipped.IsClipped);
 
         Stream MixedBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestPixelArray).Namespace}.Mixed.png");
         Bitmap MixedBitmap = new Bitmap(MixedBitmapStream);
         PixelArray MixedPixelArray = PixelArray.FromBitmap(MixedBitmap);
-        MixedPixelArray.DebugPrint();
+        _ = MixedPixelArray.GetDebugString();
         Assert.IsFalse(MixedPixelArray.IsClipped);
         PixelArray MixedClipped = MixedPixelArray.Clipped();
         Assert.IsTrue(MixedClipped.IsClipped);
@@ -82,7 +82,7 @@ public class TestPixelArray
         Stream WhiteBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestPixelArray).Namespace}.White.png");
         Bitmap WhiteBitmap = new Bitmap(WhiteBitmapStream);
         PixelArray WhitePixelArray = PixelArray.FromBitmap(WhiteBitmap);
-        WhitePixelArray.DebugPrint();
+        _ = WhitePixelArray.GetDebugString();
         PixelArray WhiteClipped = WhitePixelArray.Clipped();
         Assert.AreEqual(PixelArray.Empty, WhiteClipped);
     }
