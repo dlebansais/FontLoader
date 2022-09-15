@@ -481,19 +481,19 @@ public class TestPixelArrayHelper
 
         PixelArray MergedPixelArray;
 
-        MergedPixelArray = PixelArrayHelper.Merge(TestPixelArray, TestPixelArray, 0);
+        MergedPixelArray = PixelArrayHelper.Merge(TestPixelArray, 0, TestPixelArray, 0);
         Assert.AreEqual(TestPixelArray.Width * 2, MergedPixelArray.Width);
         Assert.AreEqual(TestPixelArray.Height, MergedPixelArray.Height);
 
-        MergedPixelArray = PixelArrayHelper.Merge(TestPixelArray, TestPixelArray, 0, TestPixelArray.Width * 2);
+        MergedPixelArray = PixelArrayHelper.Merge(TestPixelArray, 0, TestPixelArray, 0, TestPixelArray.Width * 2);
         Assert.AreEqual(TestPixelArray.Width * 2, MergedPixelArray.Width);
         Assert.AreEqual(TestPixelArray.Height, MergedPixelArray.Height);
 
-        MergedPixelArray = PixelArrayHelper.Merge(TestPixelArray, TestPixelArray, TestPixelArray.Width);
+        MergedPixelArray = PixelArrayHelper.Merge(TestPixelArray, 0, TestPixelArray, TestPixelArray.Width);
         Assert.AreEqual(TestPixelArray.Width, MergedPixelArray.Width);
         Assert.AreEqual(TestPixelArray.Height, MergedPixelArray.Height);
 
-        MergedPixelArray = PixelArrayHelper.Merge(TestPixelArray, TestPixelArray, 0, TestPixelArray.Width  + 1);
+        MergedPixelArray = PixelArrayHelper.Merge(TestPixelArray, 0, TestPixelArray, 0, TestPixelArray.Width  + 1);
         Assert.AreEqual(TestPixelArray.Width + 1, MergedPixelArray.Width);
         Assert.AreEqual(TestPixelArray.Height, MergedPixelArray.Height);
 
@@ -501,11 +501,11 @@ public class TestPixelArrayHelper
         Bitmap LargeBitmap = new Bitmap(LargeBitmapStream);
         PixelArray LargePixelArray = PixelArray.FromBitmap(LargeBitmap);
 
-        MergedPixelArray = PixelArrayHelper.Merge(TestPixelArray, LargePixelArray, TestPixelArray.Width);
+        MergedPixelArray = PixelArrayHelper.Merge(TestPixelArray, 0, LargePixelArray, TestPixelArray.Width);
         Assert.AreEqual(LargePixelArray.Width, MergedPixelArray.Width);
         Assert.AreEqual(LargePixelArray.Height, MergedPixelArray.Height);
 
-        MergedPixelArray = PixelArrayHelper.Merge(TestPixelArray, LargePixelArray, 1);
+        MergedPixelArray = PixelArrayHelper.Merge(TestPixelArray, 0, LargePixelArray, 1);
         Assert.AreEqual(TestPixelArray.Width + LargePixelArray.Width - 1, MergedPixelArray.Width);
         Assert.AreEqual(LargePixelArray.Height, MergedPixelArray.Height);
 
@@ -515,7 +515,7 @@ public class TestPixelArrayHelper
 
         PixelArray TestPixelArray2 = PixelArray.FromBitmap(TestBitmap, 2);
 
-        MergedPixelArray = PixelArrayHelper.Merge(TestPixelArray2, BigPixelArray, 1);
+        MergedPixelArray = PixelArrayHelper.Merge(TestPixelArray2, 0, BigPixelArray, 1);
         Assert.AreEqual(TestPixelArray2.Width + BigPixelArray.Width - 1, MergedPixelArray.Width);
         Assert.AreEqual(BigPixelArray.Height + 1, MergedPixelArray.Height);
     }

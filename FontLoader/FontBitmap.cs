@@ -22,13 +22,12 @@ public class FontBitmap
         SupportedLetterTypes = new List<LetterType>(streamTable.Keys);
         LetterTypeBitmapTable = new();
 
-        FillBitmapTable(streamTable, out Dictionary<LetterType, Bitmap> BitmapTable, out int FirstWidth, out int FirstHeight);
+        FillBitmapTable(streamTable, out Dictionary<LetterType, Bitmap> BitmapTable, out int MaxColumns, out int MaxRows);
 
-        if (FirstWidth > 0 && FirstHeight > 0)
+        if (MaxColumns > 0 && MaxRows > 0)
         {
-            Columns = DefaultColumns;
-            int CellSize0 = FirstWidth / Columns;
-            Rows = FirstHeight / CellSize0;
+            Columns = MaxColumns;
+            Rows = MaxRows;
 
             foreach (LetterType Key in SupportedLetterTypes)
             {
@@ -40,17 +39,17 @@ public class FontBitmap
                 Rectangle Rect = new Rectangle(0, 0, Width, Height);
                 GetBitmapBytes(BitmapTable[Key], Rect, out int Stride, out byte[] ArgbValues);
 
-                LetterTypeBitmap NewLetterTypeBitmap = new(CellSize, Baseline, Stride, ArgbValues);
+                LetterTypeBitmap NewLetterTypeBitmap = new(Width / CellSize, Height / CellSize, CellSize, Baseline, Stride, ArgbValues);
                 LetterTypeBitmapTable.Add(Key, NewLetterTypeBitmap);
             }
         }
     }
 
-    private void FillBitmapTable(Dictionary<LetterType, Stream> streamTable, out Dictionary<LetterType, Bitmap> bitmapTable, out int firstWidth, out int firstHeight)
+    private void FillBitmapTable(Dictionary<LetterType, Stream> streamTable, out Dictionary<LetterType, Bitmap> bitmapTable, out int maxColumns, out int maxRows)
     {
         bitmapTable = new();
-        firstWidth = 0;
-        firstHeight = 0;
+        maxColumns = 0;
+        maxRows = 0;
 
         foreach (LetterType Key in SupportedLetterTypes)
         {
@@ -58,10 +57,14 @@ public class FontBitmap
             Bitmap NewBitmap = new Bitmap(FontBitmapStream);
             bitmapTable.Add(Key, NewBitmap);
 
-            if (firstWidth == 0 && firstHeight == 0)
+            int Columns = DefaultColumns;
+            int CellSize = NewBitmap.Width / Columns;
+            int Rows = NewBitmap.Height / CellSize;
+
+            if (maxColumns <= Columns && maxRows <= Rows)
             {
-                firstWidth = NewBitmap.Width;
-                firstHeight = NewBitmap.Height;
+                maxColumns = Columns;
+                maxRows = Rows;
             }
         }
 
@@ -86,13 +89,17 @@ public class FontBitmap
     public PixelArray GetPixelArray(int column, int row, LetterType letterType)
     {
         LetterTypeBitmap LetterTypeBitmap = LetterTypeBitmapTable[letterType];
+        if (column < LetterTypeBitmap.Columns && row < LetterTypeBitmap.Rows)
+        {
+            int CellSize = LetterTypeBitmap.CellSize;
+            int Baseline = LetterTypeBitmap.Baseline;
+            int Stride = LetterTypeBitmap.Stride;
+            byte[] ArgbValues = LetterTypeBitmap.ArgbValues;
 
-        int CellSize = LetterTypeBitmap.CellSize;
-        int Baseline = LetterTypeBitmap.Baseline;
-        int Stride = LetterTypeBitmap.Stride;
-        byte[] ArgbValues = LetterTypeBitmap.ArgbValues;
-
-        return new PixelArray(column * CellSize, CellSize, row * CellSize, CellSize, ArgbValues, Stride, Baseline, clearEdges: true);
+            return new PixelArray(column * CellSize, CellSize, row * CellSize, CellSize, ArgbValues, Stride, Baseline, clearEdges: true);
+        }
+        else
+            return PixelArray.Empty;
     }
     #endregion
 

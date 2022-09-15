@@ -11,15 +11,24 @@
   </PropertyGroup>
 
   <ItemGroup>
-	<None Remove="FontResources/**/*.png" />
+	<None Remove="FullFontResources/**/*.png" />
 	<None Remove="LetterResources/**/*.png" />
 	<None Remove="PageResources/**/*.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="FontResources/**/*.png" />
+    <EmbeddedResource Include="FullFontResources/**/*.png" />
     <EmbeddedResource Include="LetterResources/**/*.png" />
     <EmbeddedResource Include="PageResources/**/*.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="FullFontResources\Test\23\black\bold.png" />
+    <None Include="FullFontResources\Test\23\black\italic.png" />
+    <None Include="FullFontResources\Test\23\black\normal.png" />
+    <None Include="FullFontResources\Test\23\blue\normal.png" />
+    <None Include="FullFontResources\Test\29\black\italic+bold.png" />
+    <None Include="FullFontResources\Test\29\black\normal.png" />
   </ItemGroup>
 
 </Project>

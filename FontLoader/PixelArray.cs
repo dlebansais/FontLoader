@@ -115,7 +115,7 @@ public class PixelArray
     private bool[] WhiteColumn;
     private int[] ColoredCountColumn;
 
-    internal byte GetPixel(int x, int y)
+    public byte GetPixel(int x, int y)
     {
         return Array[x + y * Width];
     }

@@ -45,6 +45,12 @@ public record Letter
         LetterType = letterType;
     }
 
+    public Letter(string text, LetterType letterType)
+    {
+        Text = text;
+        LetterType = letterType;
+    }
+
     public Letter(Letter template, LetterType letterType)
     {
         Text = template.Text;

@@ -6,7 +6,7 @@ using System.Diagnostics;
 public static class PixelArrayHelper
 {
     public static double MaxSuportedDiffRatio { get; set; } = 0.2;
-    public static double MaxSoftTakenPixelCount { get; set; } = 13;
+    public static double MaxSoftTakenPixelCount { get; set; } = 14;
 
     internal static void CopyPixel(PixelArray p1, int x1, int y1, PixelArray p2, int x2, int y2, ref bool isWhite, ref int coloredCount)
     {
@@ -43,7 +43,7 @@ public static class PixelArrayHelper
         }
     }
 
-    private static void MergePixel(PixelArray Result, PixelArray p1, PixelArray p2, int x, int y, int TotalWidth, int Baseline, ref bool isWhite, ref int coloredCount)
+    private static void MergePixel(PixelArray Result, PixelArray p1, PixelArray p2, int x, int y, int TotalWidth, int Baseline, int offsetY, ref bool isWhite, ref int coloredCount)
     {
         Debug.Assert(x >= 0);
         Debug.Assert(y >= 0);
@@ -51,7 +51,7 @@ public static class PixelArrayHelper
         if (x < p1.Width && x >= TotalWidth - p2.Width)
         {
             int OffsetY1 = Baseline - p1.Baseline;
-            int OffsetY2 = Baseline - p2.Baseline;
+            int OffsetY2 = Baseline - p2.Baseline - offsetY;
 
             if (y >= OffsetY1 && y < OffsetY1 + p1.Height && y >= OffsetY2 && y < OffsetY2 + p2.Height)
             {
@@ -73,7 +73,7 @@ public static class PixelArrayHelper
 
         if (x >= TotalWidth - p2.Width)
         {
-            int OffsetY = Baseline - p2.Baseline;
+            int OffsetY = Baseline - p2.Baseline - offsetY;
 
             if (y >= OffsetY && y < OffsetY + p2.Height)
             {
@@ -399,17 +399,17 @@ public static class PixelArrayHelper
         return true;
     }
 
-    public static PixelArray Merge(PixelArray p1, PixelArray p2, int inside)
+    public static PixelArray Merge(PixelArray p1, int offsetY, PixelArray p2, int inside)
     {
-        return Merge(p1, p2, inside, p1.Width - inside + p2.Width);
+        return Merge(p1, offsetY, p2, inside, p1.Width - inside + p2.Width);
     }
 
-    public static PixelArray Merge(PixelArray p1, PixelArray p2, int inside, int maxWidth)
+    public static PixelArray Merge(PixelArray p1, int offsetY, PixelArray p2, int inside, int maxWidth)
     {
-        int Baseline = Math.Max(p1.Baseline, p2.Baseline);
+        int Baseline = Math.Max(p1.Baseline, p2.Baseline + offsetY);
         int TotalWidth = p1.Width - inside + p2.Width;
         int Width = Math.Min(p1.Width - inside + p2.Width, maxWidth);
-        int Height = Baseline + Math.Max(p1.Height - p1.Baseline, p2.Height - p2.Baseline);
+        int Height = Baseline + Math.Max(p1.Height - p1.Baseline, p2.Height - p2.Baseline - offsetY);
 
         PixelArray Result = new PixelArray(Width, Height, Baseline);
 
@@ -419,7 +419,7 @@ public static class PixelArrayHelper
             int ColoredCount = 0;
 
             for (int y = 0; y < Height; y++)
-                MergePixel(Result, p1, p2, x, y, TotalWidth, Baseline, ref IsWhite, ref ColoredCount);
+                MergePixel(Result, p1, p2, x, y, TotalWidth, Baseline, offsetY, ref IsWhite, ref ColoredCount);
 
             Result.SetWhiteColumn(x, IsWhite);
             Result.SetColoredCountColumn(x, ColoredCount);
