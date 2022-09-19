@@ -5,8 +5,9 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using System.Windows.Media.Media3D;
 
-[DebuggerDisplay("{Width} x {Height}, {Baseline}")]
+[DebuggerDisplay("{_Width} x {Height}, {Baseline}")]
 public class PixelArray
 {
     public static readonly PixelArray Empty = new();
@@ -14,34 +15,49 @@ public class PixelArray
 
     private PixelArray()
     {
-        Width = 0;
+        _Width = 0;
         Height = 0;
         Baseline = 0;
         Array = new byte[0];
         WhiteColumn = new bool[0];
         ColoredCountColumn = new int[0];
+        IsLoaded = false;
     }
 
     public PixelArray(int width, int height, int baseline)
     {
-        Width = width;
+        Debug.Assert(width > 0);
+        Debug.Assert(height > 0);
+
+        _Width = width;
         Height = height;
         Baseline = baseline;
-        Array = new byte[Width * Height];
-        WhiteColumn = new bool[Width];
-        ColoredCountColumn = new int[Width];
+        Array = new byte[_Width * Height];
+        WhiteColumn = new bool[_Width];
+        ColoredCountColumn = new int[_Width];
+        IsLoaded = true;
     }
 
-    public PixelArray(int left, int width, int top, int height, byte[] argbValues, int stride, int baseline, bool clearEdges)
+    public PixelArray(LetterTypeBitmap sourceBitmap, int column, int row, int width, int height, int baseline, bool clearEdges, bool loadClipped)
+        : this(width, height, baseline)
     {
-        Width = width;
-        Height = height;
-        Baseline = baseline;
-        Array = new byte[Width * Height];
-        WhiteColumn = new bool[Width];
-        ColoredCountColumn = new int[Width];
+        SourceBitmap = sourceBitmap;
+        SourceColumn = column;
+        SourceRow = row;
+        SourceClearEdges = clearEdges;
+        SourceLoadClipped = loadClipped;
+        IsLoaded = false;
+    }
 
-        for (int x = 0; x < Width; x++)
+    public PixelArray(byte[] argbValues, int stride, int left, int width, int top, int height, int baseline, bool clearEdges)
+        : this(width, height, baseline)
+    {
+        Load(argbValues, stride, left, top, clearEdges);
+    }
+
+    public void Load(byte[] argbValues, int stride, int left, int top, bool clearEdge)
+    {
+        for (int x = 0; x < _Width; x++)
             WhiteColumn[x] = true;
 
         int ArrayOffset = 0;
@@ -50,12 +66,12 @@ public class PixelArray
         {
             int ArgbValuesOffset = ((top + y) * stride) + (left * 4);
 
-            for (int x = 0; x < Width; x++)
+            for (int x = 0; x < _Width; x++)
             {
                 int B = argbValues[ArgbValuesOffset + 0];
                 int G = argbValues[ArgbValuesOffset + 1];
                 int R = argbValues[ArgbValuesOffset + 2];
-                int Pixel = (clearEdges && (x == 0 || y == 0)) ? 0xFF : (R + G + B) / 3;
+                int Pixel = (clearEdge && (x == 0 || y == 0)) ? 0xFF : (R + G + B) / 3;
                 Array[ArrayOffset] = (byte)Pixel;
 
                 if (Pixel != 0xFF)
@@ -70,6 +86,8 @@ public class PixelArray
                 ArrayOffset++;
             }
         }
+
+        IsLoaded = true;
     }
 
     public static PixelArray FromBitmap(Bitmap bitmap)
@@ -105,34 +123,53 @@ public class PixelArray
 
         bitmap.UnlockBits(Data);
 
-        return new PixelArray(rect.Left, rect.Width, rect.Top, rect.Height, ArgbValues, Stride, Baseline, clearEdges: false);
+        return new PixelArray(ArgbValues, Stride, rect.Left, rect.Width, rect.Top, rect.Height, Baseline, clearEdges: false);
     }
 
-    public int Width { get; }
-    public int Height { get; }
-    public int Baseline { get; }
+    public LetterTypeBitmap? SourceBitmap { get; }
+    public int SourceColumn { get; }
+    public int SourceRow { get; }
+    public bool SourceClearEdges { get; }
+    public bool SourceLoadClipped { get; }
+
+    public int Width
+    { 
+        get
+        {
+            CommitSource();
+            return _Width;
+        }
+    }
+    private int _Width;
+
+    public int Height { get; private set; }
+
+    public int Baseline { get; private set; }
     private byte[] Array;
     private bool[] WhiteColumn;
     private int[] ColoredCountColumn;
+    private bool IsLoaded;
 
     public byte GetPixel(int x, int y)
     {
-        return Array[x + y * Width];
+        Debug.Assert(IsLoaded);
+
+        return Array[x + y * _Width];
     }
 
     internal void SetPixel(int x, int y, byte value)
     {
-        Array[x + y * Width] = value;
+        Array[x + y * _Width] = value;
     }
 
     internal void ClearPixel(int x, int y)
     {
-        Array[x + y * Width] = 0xFF;
+        Array[x + y * _Width] = 0xFF;
     }
 
     internal bool IsWhite(int x, int y)
     {
-        return Array[x + y * Width] == 0xFF;
+        return Array[x + y * _Width] == 0xFF;
     }
 
     internal bool IsWhiteColumn(int x)
@@ -157,7 +194,9 @@ public class PixelArray
 
     public bool IsColored(int x, int y, out byte color)
     {
-        color = Array[x + y * Width];
+        Debug.Assert(IsLoaded);
+
+        color = Array[x + y * _Width];
 
         bool IsWhite = color == 0xFF;
         bool IsBlack = color == 0;
@@ -168,95 +207,15 @@ public class PixelArray
 
     public PixelArray Clipped()
     {
-        int LeftEdge;
-        int RightEdge;
-        int TopEdge;
-        int BottomEdge;
+        CommitSource();
 
-        for (LeftEdge = 0; LeftEdge < Width; LeftEdge++)
-        {
-            bool IsEmptyColumn = true;
-            for (int y = 0; y < Height; y++)
-            {
-                if (!IsWhite(LeftEdge, y))
-                {
-                    IsEmptyColumn = false;
-                    break;
-                }
-            }
-
-            if (!IsEmptyColumn)
-                break;
-        }
-
-        for (RightEdge = Width; RightEdge > 0; RightEdge--)
-        {
-            bool IsEmptyColumn = true;
-            for (int y = 0; y < Height; y++)
-            {
-                if (!IsWhite(RightEdge - 1, y))
-                {
-                    IsEmptyColumn = false;
-                    break;
-                }
-            }
-
-            if (!IsEmptyColumn)
-                break;
-        }
-
-        for (TopEdge = 0; TopEdge < Height; TopEdge++)
-        {
-            bool IsEmptyLine = true;
-            for (int x = 0; x < Width; x++)
-            {
-                if (!IsWhite(x, TopEdge))
-                {
-                    IsEmptyLine = false;
-                    break;
-                }
-            }
-
-            if (!IsEmptyLine)
-                break;
-        }
-
-
-        for (BottomEdge = Height; BottomEdge > 0; BottomEdge--)
-        {
-            bool IsEmptyLine = true;
-            for (int x = 0; x < Width; x++)
-            {
-                if (!IsWhite(x, BottomEdge - 1))
-                {
-                    IsEmptyLine = false;
-                    break;
-                }
-            }
-
-            if (!IsEmptyLine)
-                break;
-        }
+        GetClipZone(out int LeftEdge, out int TopEdge, out int RightEdge, out int BottomEdge);
 
         if (LeftEdge < RightEdge && TopEdge < BottomEdge)
         {
-            if (LeftEdge > 0 || RightEdge < Width || TopEdge > 0 || BottomEdge < Height)
+            if (LeftEdge > 0 || RightEdge < _Width || TopEdge > 0 || BottomEdge < Height)
             {
-                PixelArray Result = new(RightEdge - LeftEdge, BottomEdge - TopEdge, Baseline - TopEdge);
-
-                for (int x = 0; x < Result.Width; x++)
-                {
-                    bool IsWhite = true;
-                    int ColoredCount = 0;
-
-                    for (int y = 0; y < Result.Height; y++)
-                        PixelArrayHelper.CopyPixel(this, LeftEdge + x, TopEdge + y, Result, x, y, ref IsWhite, ref ColoredCount);
-
-                    Result.WhiteColumn[x] = IsWhite;
-                    Result.ColoredCountColumn[x] = ColoredCount;
-                }
-
-                return Result;
+                return Clipped(LeftEdge, TopEdge, RightEdge, BottomEdge);
             }
             else
                 return this;
@@ -265,21 +224,113 @@ public class PixelArray
             return Empty;
     }
 
+    public void GetClipZone(out int leftEdge, out int topEdge, out int rightEdge, out int bottomEdge)
+    {
+        for (leftEdge = 0; leftEdge < _Width; leftEdge++)
+        {
+            bool IsEmptyColumn = true;
+            for (int y = 0; y < Height; y++)
+            {
+                if (!IsWhite(leftEdge, y))
+                {
+                    IsEmptyColumn = false;
+                    break;
+                }
+            }
+
+            if (!IsEmptyColumn)
+                break;
+        }
+
+        for (rightEdge = _Width; rightEdge > 0; rightEdge--)
+        {
+            bool IsEmptyColumn = true;
+            for (int y = 0; y < Height; y++)
+            {
+                if (!IsWhite(rightEdge - 1, y))
+                {
+                    IsEmptyColumn = false;
+                    break;
+                }
+            }
+
+            if (!IsEmptyColumn)
+                break;
+        }
+
+        for (topEdge = 0; topEdge < Height; topEdge++)
+        {
+            bool IsEmptyLine = true;
+            for (int x = 0; x < _Width; x++)
+            {
+                if (!IsWhite(x, topEdge))
+                {
+                    IsEmptyLine = false;
+                    break;
+                }
+            }
+
+            if (!IsEmptyLine)
+                break;
+        }
+
+
+        for (bottomEdge = Height; bottomEdge > 0; bottomEdge--)
+        {
+            bool IsEmptyLine = true;
+            for (int x = 0; x < _Width; x++)
+            {
+                if (!IsWhite(x, bottomEdge - 1))
+                {
+                    IsEmptyLine = false;
+                    break;
+                }
+            }
+
+            if (!IsEmptyLine)
+                break;
+        }
+    }
+
+    public PixelArray Clipped(int leftEdge, int topEdge, int rightEdge, int bottomEdge)
+    {
+        PixelArray Result = new(rightEdge - leftEdge, bottomEdge - topEdge, Baseline - topEdge);
+
+        for (int x = 0; x < Result.Width; x++)
+        {
+            bool IsWhite = true;
+            int ColoredCount = 0;
+
+            for (int y = 0; y < Result.Height; y++)
+                PixelArrayHelper.CopyPixel(this, leftEdge + x, topEdge + y, Result, x, y, ref IsWhite, ref ColoredCount);
+
+            Result.WhiteColumn[x] = IsWhite;
+            Result.ColoredCountColumn[x] = ColoredCount;
+        }
+
+        return Result;
+    }
+
     public bool IsClipped
     {
         get
         {
-            bool Result = true;
-            Result &= IsClippedColumn(0);
-            Result &= IsClippedColumn(Width - 1);
-            Result &= IsClippedRow(0);
-            Result &= IsClippedRow(Height - 1);
+            if (IsLoaded)
+            {
+                bool Result = true;
+                Result &= IsClippedColumn(0);
+                Result &= IsClippedColumn(_Width - 1);
+                Result &= IsClippedRow(0);
+                Result &= IsClippedRow(Height - 1);
 
-            return Result;
+                return Result;
+            }
+            else
+                return SourceLoadClipped;
         }
     }
 
-    public bool IsClippedColumn(int column)
+    internal bool IsClippedColumn(int column)
     {
         bool WhiteColumn = true;
         for (int y = 0; y < Height; y++)
@@ -292,10 +343,10 @@ public class PixelArray
         return !WhiteColumn;
     }
 
-    public bool IsClippedRow(int row)
+    internal bool IsClippedRow(int row)
     {
         bool IsWhiteRow = true;
-        for (int x = 0; x < Width; x++)
+        for (int x = 0; x < _Width; x++)
             if (!IsWhite(x, row))
             {
                 IsWhiteRow = false;
@@ -307,51 +358,105 @@ public class PixelArray
 
     public PixelArray GetLeftSide(int leftWidth)
     {
-        PixelArray Result = new PixelArray(leftWidth, Height, Baseline);
+        CommitSource();
+
+        PixelArray Source = SourceLoadClipped ? Clipped() : this;
+        return GetLeftSide(Source, leftWidth);
+    }
+
+    internal static PixelArray GetLeftSide(PixelArray source, int leftWidth)
+    {
+        PixelArray Result = new PixelArray(leftWidth, source.Height, source.Baseline);
 
         for (int x = 0; x < leftWidth; x++)
         {
             bool IsWhite = true;
             int ColoredCount = 0;
 
-            for (int y = 0; y < Height; y++)
-                PixelArrayHelper.CopyPixel(this, x, y, Result, x, y, ref IsWhite, ref ColoredCount);
+            for (int y = 0; y < source.Height; y++)
+                PixelArrayHelper.CopyPixel(source, x, y, Result, x, y, ref IsWhite, ref ColoredCount);
 
             Result.WhiteColumn[x] = IsWhite;
             Result.ColoredCountColumn[x] = ColoredCount;
         }
 
+        Debug.Assert(Result.IsLoaded);
         return Result;
     }
 
     public PixelArray GetRightSide(int rightWidth)
     {
-        PixelArray Result = new PixelArray(rightWidth, Height, Baseline);
+        CommitSource();
+
+        PixelArray Source = SourceLoadClipped ? Clipped() : this;
+        return GetRightSide(Source, rightWidth);
+    }
+
+    internal static PixelArray GetRightSide(PixelArray source, int rightWidth)
+    {
+        PixelArray Result = new PixelArray(rightWidth, source.Height, source.Baseline);
 
         for (int x = 0; x < rightWidth; x++)
         {
             bool IsWhite = true;
             int ColoredCount = 0;
 
-            for (int y = 0; y < Height; y++)
-                PixelArrayHelper.CopyPixel(this, Width - rightWidth + x, y, Result, x, y, ref IsWhite, ref ColoredCount);
+            for (int y = 0; y < source.Height; y++)
+                PixelArrayHelper.CopyPixel(source, source.Width - rightWidth + x, y, Result, x, y, ref IsWhite, ref ColoredCount);
 
             Result.WhiteColumn[x] = IsWhite;
             Result.ColoredCountColumn[x] = ColoredCount;
         }
 
+        Debug.Assert(Result.IsLoaded);
         return Result;
+    }
+
+    internal void CommitSource()
+    {
+        if (!IsLoaded)
+        {
+            Debug.Assert(SourceBitmap is not null);
+
+            if (SourceBitmap is not null)
+            {
+                SourceBitmap.GetBitmapBytes(out byte[] ArgbValues, out int Stride);
+
+                Debug.Assert(_Width == SourceBitmap.CellSize);
+                Debug.Assert(Height == SourceBitmap.CellSize);
+                Debug.Assert(Baseline == SourceBitmap.Baseline);
+
+                Array = new byte[_Width * Height];
+                WhiteColumn = new bool[_Width];
+                ColoredCountColumn = new int[_Width];
+
+                Load(ArgbValues, Stride, SourceColumn * SourceBitmap.CellSize, SourceRow * SourceBitmap.CellSize, SourceClearEdges);
+
+                if (SourceLoadClipped)
+                {
+                    PixelArray Modified = Clipped();
+                    _Width = Modified._Width;
+                    Height = Modified.Height;
+                    Baseline = Modified.Baseline;
+                    Array = Modified.Array;
+                    WhiteColumn = Modified.WhiteColumn;
+                    ColoredCountColumn = Modified.ColoredCountColumn;
+                }
+            }
+        }
     }
 
     public string GetDebugString()
     {
+        CommitSource();
+
         string Result = string.Empty;
 
         for (int y = 0; y < Height; y++)
         {
-            for (int x = 0; x < Width; x++)
+            for (int x = 0; x < _Width; x++)
             {
-                uint RGB = Array[x + y * Width];
+                uint RGB = Array[x + y * _Width];
                 uint Pixel = (((RGB >> 0) & 0xFF) + ((RGB >> 8) & 0xFF) + ((RGB >> 16) & 0xFF)) / 3;
                 Result += Pixel < 0x40 ? "X" : (y == Baseline ? "." : " ");
             }

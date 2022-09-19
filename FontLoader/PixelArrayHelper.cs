@@ -104,6 +104,9 @@ public static class PixelArrayHelper
         //int MaxSupportedDiff = (int)((Width * Height) * MaxSuportedDiffRatio);
         int MaxSupportedDiff = 5;
 
+        p1.CommitSource();
+        p2.CommitSource();
+
         for (int x = 0; x < Width; x++)
             for (int y = 0; y < Height; y++)
             {
@@ -125,6 +128,9 @@ public static class PixelArrayHelper
         int Width = p1.Width;
         int Height = p1.Height;
         int DiffTotal = 0;
+
+        p1.CommitSource();
+        p2.CommitSource();
 
         for (int x = 0; x < Width; x++)
             for (int y = 0; y < Height; y++)
@@ -151,6 +157,9 @@ public static class PixelArrayHelper
         int DiffTotal = 0;
         //int MaxSupportedDiff = (int)((Width * Height) * MaxSuportedDiffRatio);
         int MaxSupportedDiff = 5;
+
+        p1.CommitSource();
+        p2.CommitSource();
 
         firstDiffX = -1;
 
@@ -204,6 +213,9 @@ public static class PixelArrayHelper
 
     public static bool IsLeftDiagonalMatch(PixelArray p1, double perfectMatchRatio, int rightOverlapWidth, PixelArray p2, int verticalOffset)
     {
+        p1.CommitSource();
+        p2.CommitSource();
+
         int Baseline1 = p1.Baseline;
         int Baseline2 = p2.Baseline + verticalOffset;
 
@@ -296,6 +308,9 @@ public static class PixelArrayHelper
 
     public static bool IsRightMatch(PixelArray p1, PixelArray p2, int verticalOffset)
     {
+        p1.CommitSource();
+        p2.CommitSource();
+
         int Baseline1 = p1.Baseline;
         int Baseline2 = p2.Baseline + verticalOffset;
 
@@ -392,6 +407,9 @@ public static class PixelArrayHelper
         Debug.Assert(p1.Width >= testWidth);
         Debug.Assert(p2.Width >= testWidth);
 
+        p1.CommitSource();
+        p2.CommitSource();
+
         for (int x = 0; x < testWidth; x++)
             if (p1.IsWhiteColumn(x) != p2.IsWhiteColumn(x) || p1.GetColoredCountColumn(x) != p2.GetColoredCountColumn(x))
                 return false;
@@ -401,11 +419,17 @@ public static class PixelArrayHelper
 
     public static PixelArray Merge(PixelArray p1, int offsetY, PixelArray p2, int inside)
     {
+        p1.CommitSource();
+        p2.CommitSource();
+
         return Merge(p1, offsetY, p2, inside, p1.Width - inside + p2.Width);
     }
 
     public static PixelArray Merge(PixelArray p1, int offsetY, PixelArray p2, int inside, int maxWidth)
     {
+        p1.CommitSource();
+        p2.CommitSource();
+
         int Baseline = Math.Max(p1.Baseline, p2.Baseline + offsetY);
         int TotalWidth = p1.Width - inside + p2.Width;
         int Width = Math.Min(p1.Width - inside + p2.Width, maxWidth);
@@ -430,6 +454,8 @@ public static class PixelArrayHelper
 
     public static PixelArray CutRight(PixelArray p1, int endCutoff)
     {
+        p1.CommitSource();
+
         if (endCutoff <= 0 || p1.Width <= endCutoff * 2)
             return p1;
 
@@ -452,18 +478,20 @@ public static class PixelArrayHelper
 
     public static PixelArray CutLeft(PixelArray p1, int startCutoff)
     {
+        p1.CommitSource();
+
         if (startCutoff <= 0 || p1.Width <= startCutoff * 2)
             return p1;
 
         PixelArray Result = new PixelArray(p1.Width - startCutoff, p1.Height, p1.Baseline);
 
-        for (int x = startCutoff; x < Result.Width; x++)
+        for (int x = 0; x < Result.Width; x++)
         {
             bool IsWhite = true;
             int ColoredCount = 0;
 
             for (int y = 0; y < p1.Height; y++)
-                CopyPixel(p1, x, y, Result, x - startCutoff, y, ref IsWhite, ref ColoredCount);
+                CopyPixel(p1, x + startCutoff, y, Result, x, y, ref IsWhite, ref ColoredCount);
 
             Result.SetWhiteColumn(x, IsWhite);
             Result.SetColoredCountColumn(x, ColoredCount);
@@ -476,6 +504,9 @@ public static class PixelArrayHelper
     {
         if (p1.Baseline >= p2.Baseline && p1.Height - p1.Baseline >= p2.Height - p2.Baseline)
             return p1;
+
+        p1.CommitSource();
+        p2.CommitSource();
 
         int TopHeight = Math.Max(p2.Baseline - p1.Baseline, 0);
         int BottomHeight = Math.Max((p2.Height - p2.Baseline) - (p1.Height - p1.Baseline), 0);

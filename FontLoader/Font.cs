@@ -1,5 +1,6 @@
 ﻿namespace FontLoader;
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -16,7 +17,7 @@ public class Font
         Name = fontName;
         ProgressTable = FillProgressTable(fontAssembly);
 
-        FontBitmap Bitmap = FillFontBitmap(fontAssembly);
+        FontBitmapCollection Bitmap = FillFontBitmap(fontAssembly);
         CharacterTable = FillCharacterTable(Bitmap, cellTable);
     }
 
@@ -69,21 +70,21 @@ public class Font
         return true;
     }
 
-    private FontBitmap FillFontBitmap(Assembly fontAssembly)
+    private FontBitmapCollection FillFontBitmap(Assembly fontAssembly)
     {
-        Dictionary<LetterType, Stream> StreamTable = new();
+        Dictionary<LetterType, FontBitmapStream> StreamTable = new();
         string[] ResourceNames = fontAssembly.GetManifestResourceNames();
 
         foreach (string ResourceName in ResourceNames)
             if (TryParseFontResource(ResourceName, out double FontSize, out bool IsBlue, out bool IsItalic, out bool IsBold))
             {
                 LetterType FontLetterType = new(FontSize, IsBlue, IsItalic, IsBold);
-                Stream FontBitmapStream = fontAssembly.GetManifestResourceStream(ResourceName);
+                FontBitmapStream FontBitmapStream = new(fontAssembly, ResourceName, FontSize);
 
                 StreamTable.Add(FontLetterType, FontBitmapStream);
             }
 
-        return new FontBitmap(StreamTable);
+        return new FontBitmapCollection(StreamTable);
     }
 
     private bool TryParseFontResource(string resourceName, out double fontSize, out bool isBlue, out bool isItalic, out bool isBold)
@@ -155,7 +156,7 @@ public class Font
         return true;
     }
 
-    private Dictionary<Letter, PixelArray> FillCharacterTable(FontBitmap bitmap, Dictionary<Letter, FontBitmapCell> cellTable)
+    private Dictionary<Letter, PixelArray> FillCharacterTable(FontBitmapCollection bitmap, Dictionary<Letter, FontBitmapCell> cellTable)
     {
         Dictionary<Letter, PixelArray> CharacterTable = new();
         bool[,] CellTaken = new bool[bitmap.Columns, bitmap.Rows];
@@ -179,13 +180,12 @@ public class Font
         return CharacterTable;
     }
 
-    private void AddLetter(FontBitmap bitmap, int column, int row, Dictionary<Letter, PixelArray> characterTable, Letter letter)
+    private void AddLetter(FontBitmapCollection bitmap, int column, int row, Dictionary<Letter, PixelArray> characterTable, Letter letter)
     {
         foreach (LetterType Key in bitmap.SupportedLetterTypes)
             if (LetterType.IsSameType(Key, letter.LetterType))
             {
-                PixelArray CellArray = bitmap.GetPixelArray(column, row, Key);
-                CellArray = CellArray.Clipped();
+                PixelArray CellArray = bitmap.GetPixelArray(column, row, Key, isClipped: true);
 
                 if (CellArray != PixelArray.Empty)
                     AddLetter(characterTable, letter, Key.FontSize, Key.IsBlue, CellArray);
@@ -199,28 +199,18 @@ public class Font
 
         characterTable.Add(NewLetter, cellArray);
     }
-
-    private void AddLetter(FontBitmap bitmap, int column, int row, Dictionary<Letter, PixelArray> characterTable, char character)
-    {
-        foreach (LetterType Key in bitmap.SupportedLetterTypes)
-        {
-            Letter Letter = new Letter(character, Key);
-
-            if (!characterTable.ContainsKey(Letter))
-            {
-                PixelArray CellArray = bitmap.GetPixelArray(column, row, Key);
-                CellArray = CellArray.Clipped();
-
-                if (CellArray != PixelArray.Empty)
-                    characterTable.Add(Letter, CellArray);
-            }
-        }
-    }
     #endregion
 
     #region Properties
     public string Name { get; }
     public Dictionary<char, PixelArray> ProgressTable { get; }
     public Dictionary<Letter, PixelArray> CharacterTable { get; }
+    #endregion
+
+    #region Tools
+    public static int FontSizeToCellSize(double fontSize)
+    {
+        return (int)Math.Round(fontSize * 0.8);
+    }
     #endregion
 }
