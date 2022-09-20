@@ -186,9 +186,9 @@ public class Font
             if (LetterType.IsSameType(Key, letter.LetterType))
             {
                 PixelArray CellArray = bitmap.GetPixelArray(column, row, Key, isClipped: true);
+                Debug.Assert(CellArray != PixelArray.Empty);
 
-                if (CellArray != PixelArray.Empty)
-                    AddLetter(characterTable, letter, Key.FontSize, Key.IsBlue, CellArray);
+                AddLetter(characterTable, letter, Key.FontSize, Key.IsBlue, CellArray);
             }
     }
 
