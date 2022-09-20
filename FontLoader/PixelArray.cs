@@ -403,34 +403,31 @@ public class PixelArray
 
     internal void CommitSource()
     {
-        if (!IsLoaded)
+        Debug.Assert(SourceBitmap is not null || IsLoaded);
+
+        if (SourceBitmap is not null && !IsLoaded)
         {
-            Debug.Assert(SourceBitmap is not null);
+            SourceBitmap.GetBitmapBytes(out byte[] ArgbValues, out int Stride);
 
-            if (SourceBitmap is not null)
+            Debug.Assert(_Width == SourceBitmap.CellSize);
+            Debug.Assert(Height == SourceBitmap.CellSize);
+            Debug.Assert(Baseline == SourceBitmap.Baseline);
+
+            Array = new byte[_Width * Height];
+            WhiteColumn = new bool[_Width];
+            ColoredCountColumn = new int[_Width];
+
+            Load(ArgbValues, Stride, SourceColumn * SourceBitmap.CellSize, SourceRow * SourceBitmap.CellSize, SourceClearEdges);
+
+            if (SourceLoadClipped)
             {
-                SourceBitmap.GetBitmapBytes(out byte[] ArgbValues, out int Stride);
-
-                Debug.Assert(_Width == SourceBitmap.CellSize);
-                Debug.Assert(Height == SourceBitmap.CellSize);
-                Debug.Assert(Baseline == SourceBitmap.Baseline);
-
-                Array = new byte[_Width * Height];
-                WhiteColumn = new bool[_Width];
-                ColoredCountColumn = new int[_Width];
-
-                Load(ArgbValues, Stride, SourceColumn * SourceBitmap.CellSize, SourceRow * SourceBitmap.CellSize, SourceClearEdges);
-
-                if (SourceLoadClipped)
-                {
-                    PixelArray Modified = Clipped();
-                    _Width = Modified._Width;
-                    Height = Modified.Height;
-                    Baseline = Modified.Baseline;
-                    Array = Modified.Array;
-                    WhiteColumn = Modified.WhiteColumn;
-                    ColoredCountColumn = Modified.ColoredCountColumn;
-                }
+                PixelArray Modified = Clipped();
+                _Width = Modified._Width;
+                Height = Modified.Height;
+                Baseline = Modified.Baseline;
+                Array = Modified.Array;
+                WhiteColumn = Modified.WhiteColumn;
+                ColoredCountColumn = Modified.ColoredCountColumn;
             }
         }
     }
