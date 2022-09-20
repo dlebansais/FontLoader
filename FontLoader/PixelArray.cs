@@ -107,16 +107,16 @@ public class PixelArray
 
     public static PixelArray FromBitmap(Bitmap bitmap, Rectangle rect, int baselineDiff)
     {
-        int Width = bitmap.Width;
-        int Height = bitmap.Height;
-        int Baseline = Height - baselineDiff;
+        int BitmapWidth = bitmap.Width;
+        int BitmapHeight = bitmap.Height;
+        int Baseline = BitmapHeight - baselineDiff;
 
-        Rectangle FullRect = new Rectangle(0, 0, Width, Height);
+        Rectangle FullRect = new Rectangle(0, 0, BitmapWidth, BitmapHeight);
         BitmapData Data = bitmap.LockBits(FullRect, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 
         int Stride = Math.Abs(Data.Stride);
 
-        int ByteCount = Data.Stride * FullRect.Height;
+        int ByteCount = Data.Stride * BitmapHeight;
         byte[] ArgbValues = new byte[ByteCount];
 
         Marshal.Copy(Data.Scan0, ArgbValues, 0, ByteCount);
@@ -361,21 +361,15 @@ public class PixelArray
     {
         CommitSource();
 
-        PixelArray Source = SourceLoadClipped ? Clipped() : this;
-        return GetLeftSide(Source, leftWidth);
-    }
-
-    internal static PixelArray GetLeftSide(PixelArray source, int leftWidth)
-    {
-        PixelArray Result = new PixelArray(leftWidth, source.Height, source.Baseline);
+        PixelArray Result = new PixelArray(leftWidth, Height, Baseline);
 
         for (int x = 0; x < leftWidth; x++)
         {
             bool IsWhite = true;
             int ColoredCount = 0;
 
-            for (int y = 0; y < source.Height; y++)
-                PixelArrayHelper.CopyPixel(source, x, y, Result, x, y, ref IsWhite, ref ColoredCount);
+            for (int y = 0; y < Height; y++)
+                PixelArrayHelper.CopyPixel(this, x, y, Result, x, y, ref IsWhite, ref ColoredCount);
 
             Result.WhiteColumn[x] = IsWhite;
             Result.ColoredCountColumn[x] = ColoredCount;
@@ -389,21 +383,15 @@ public class PixelArray
     {
         CommitSource();
 
-        PixelArray Source = SourceLoadClipped ? Clipped() : this;
-        return GetRightSide(Source, rightWidth);
-    }
-
-    internal static PixelArray GetRightSide(PixelArray source, int rightWidth)
-    {
-        PixelArray Result = new PixelArray(rightWidth, source.Height, source.Baseline);
+        PixelArray Result = new PixelArray(rightWidth, Height, Baseline);
 
         for (int x = 0; x < rightWidth; x++)
         {
             bool IsWhite = true;
             int ColoredCount = 0;
 
-            for (int y = 0; y < source.Height; y++)
-                PixelArrayHelper.CopyPixel(source, source.Width - rightWidth + x, y, Result, x, y, ref IsWhite, ref ColoredCount);
+            for (int y = 0; y < Height; y++)
+                PixelArrayHelper.CopyPixel(this, _Width - rightWidth + x, y, Result, x, y, ref IsWhite, ref ColoredCount);
 
             Result.WhiteColumn[x] = IsWhite;
             Result.ColoredCountColumn[x] = ColoredCount;

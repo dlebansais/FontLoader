@@ -525,6 +525,25 @@ public class TestPixelArrayHelper
     }
 
     [Test]
+    public void CutLeftTest()
+    {
+        Assembly TestAssembly = Assembly.GetExecutingAssembly();
+        Stream TestBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestPixelArray).Namespace}.Mixed.png");
+        Bitmap TestBitmap = new Bitmap(TestBitmapStream);
+        PixelArray TestPixelArray = PixelArray.FromBitmap(TestBitmap);
+
+        PixelArray CutPixelArray;
+
+        CutPixelArray = PixelArrayHelper.CutLeft(TestPixelArray, 0);
+        Assert.AreEqual(CutPixelArray.Width, TestPixelArray.Width);
+        Assert.AreEqual(CutPixelArray.Height, TestPixelArray.Height);
+
+        CutPixelArray = PixelArrayHelper.CutLeft(TestPixelArray, 1);
+        Assert.AreEqual(CutPixelArray.Width, TestPixelArray.Width - 1);
+        Assert.AreEqual(CutPixelArray.Height, TestPixelArray.Height);
+    }
+
+    [Test]
     public void CutRightTest()
     {
         Assembly TestAssembly = Assembly.GetExecutingAssembly();

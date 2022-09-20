@@ -17,6 +17,15 @@ public class TestLetter
         Assert.IsFalse(LetterANormal.IsBlue);
         Assert.IsFalse(LetterANormal.IsItalic);
         Assert.IsFalse(LetterANormal.IsBold);
+
+        Letter LetterSTNormal = new("st", LetterType.Normal);
+        Assert.AreEqual("st", LetterSTNormal.Text);
+        Assert.AreEqual(LetterType.Normal, LetterSTNormal.LetterType);
+        Assert.IsFalse(LetterSTNormal.IsEmpty);
+        Assert.AreEqual("st", LetterSTNormal.DisplayText);
+        Assert.IsFalse(LetterSTNormal.IsBlue);
+        Assert.IsFalse(LetterSTNormal.IsItalic);
+        Assert.IsFalse(LetterSTNormal.IsBold);
     }
 
     [Test]
