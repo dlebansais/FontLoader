@@ -132,6 +132,7 @@ public class PixelArray
     public bool SourceClearEdges { get; }
     public bool SourceLoadClipped { get; }
 
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     public int Width
     { 
         get

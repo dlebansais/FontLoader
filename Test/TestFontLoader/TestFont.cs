@@ -32,7 +32,7 @@ public class TestFont
         Assert.AreEqual(0, TestFont.CharacterTable.Count);
     }
 
-    private Dictionary<Letter, FontBitmapCell> FillCellTable()
+    internal static Dictionary<Letter, FontBitmapCell> FillCellTable()
     {
         Dictionary<Letter, FontBitmapCell> FontCellTable = new();
 
@@ -105,7 +105,7 @@ public class TestFont
         return FontCellTable;
     }
 
-    private void FillTestTable(Dictionary<Letter, FontBitmapCell> fontCellTable, char character, FontBitmapCell bitmapCell)
+    internal static void FillTestTable(Dictionary<Letter, FontBitmapCell> fontCellTable, char character, FontBitmapCell bitmapCell)
     {
         fontCellTable.Add(new Letter(character, LetterType.Normal), bitmapCell);
         fontCellTable.Add(new Letter(character, LetterType.Italic), bitmapCell);

@@ -4,9 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Runtime.InteropServices;
 
 [DebuggerDisplay("{Columns} Column(s), {Rows} Row(s)")]
 public class FontBitmapCollection
@@ -74,15 +71,20 @@ public class FontBitmapCollection
 
     public PixelArray GetPixelArray(int column, int row, LetterType letterType, bool isClipped)
     {
-        PixelArray Result = PixelArray.Empty;
+        if (!LetterTypeBitmapTable.ContainsKey(letterType))
+            throw new ArgumentException(nameof(letterType));
 
         LetterTypeBitmap LetterTypeBitmap = LetterTypeBitmapTable[letterType];
-        if (column < LetterTypeBitmap.Columns && row < LetterTypeBitmap.Rows)
-        {
-            int CellSize = LetterTypeBitmap.CellSize;
-            int Baseline = LetterTypeBitmap.Baseline;
-            Result = new PixelArray(LetterTypeBitmap, column, row, CellSize, CellSize, Baseline, clearEdges: true, isClipped);
-        }
+
+        if (column >= LetterTypeBitmap.Columns)
+            throw new ArgumentException(nameof(column));
+
+        if (row >= LetterTypeBitmap.Rows)
+            throw new ArgumentException(nameof(row));
+
+        int CellSize = LetterTypeBitmap.CellSize;
+        int Baseline = LetterTypeBitmap.Baseline;
+        PixelArray Result = new PixelArray(LetterTypeBitmap, column, row, CellSize, CellSize, Baseline, clearEdges: true, isClipped);
 
         return Result;
     }

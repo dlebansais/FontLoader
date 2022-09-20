@@ -4,9 +4,13 @@ using FontLoader;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
+using Font = FontLoader.Font;
 
 [TestFixture]
 public class TestPixelArrayHelper
@@ -568,4 +572,56 @@ public class TestPixelArrayHelper
         Assert.AreEqual(EnlargedPixelArray.Width, LargePixelArray2.Width);
         Assert.AreEqual(EnlargedPixelArray.Height, LargePixelArray2.Height);
     }
+
+    [Test]
+    public void CommitClippedTest()
+    {
+        Dictionary<Letter, FontBitmapCell> CellTable = TestFont.FillCellTable();
+        Font TestFontObject = new("Test", typeof(Dummy).Assembly, CellTable);
+
+        Dictionary<Letter, PixelArray> CharacterTable = TestFontObject.CharacterTable;
+
+        PixelArray TestPixelArray = PixelArray.Empty;
+        foreach (KeyValuePair<Letter, PixelArray> Entry in CharacterTable)
+            if (Entry.Key.Text == "£")
+            {
+                TestPixelArray = Entry.Value;
+                break;
+            }
+
+        Assert.AreNotEqual(TestPixelArray, PixelArray.Empty);
+        Assert.IsTrue(TestPixelArray.IsClipped);
+
+        bool IsMatch = PixelArrayHelper.IsPixelToPixelMatch(TestPixelArray, TestPixelArray);
+        Assert.IsTrue(IsMatch);
+        Assert.IsTrue(TestPixelArray.IsClipped);
+    }
+
+    [Test]
+    public void CommitNotClippedTest()
+    {
+        using FontBitmapStream TestBitmapStream = CreateTestStream();
+        Dictionary<LetterType, FontBitmapStream> StreamTable = new() { { LetterType.Normal, TestBitmapStream } };
+        FontBitmapCollection TestObject = new FontBitmapCollection(StreamTable);
+
+        Assert.Less(0, TestObject.SupportedLetterTypes.Count);
+
+        LetterType TestLetterType = TestObject.SupportedLetterTypes[0];
+
+        PixelArray TestPixelArray = TestObject.GetPixelArray(0, 0, TestLetterType, isClipped: false);
+        Assert.IsFalse(TestPixelArray.IsClipped);
+
+        bool IsMatch = PixelArrayHelper.IsPixelToPixelMatch(TestPixelArray, TestPixelArray);
+        Assert.IsTrue(IsMatch);
+        Assert.IsFalse(TestPixelArray.IsClipped);
+    }
+
+    private FontBitmapStream CreateTestStream()
+    {
+        var FontAssembly = typeof(Dummy).Assembly;
+        var ResourceName = $"{typeof(Dummy).Namespace}.FullFontResources.Test._{TestFontSize}.black.normal.png";
+        return new FontBitmapStream(FontAssembly, ResourceName, TestFontSize);
+    }
+
+    private const int TestFontSize = 75;
 }
