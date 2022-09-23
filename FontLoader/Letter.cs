@@ -61,6 +61,7 @@ public record Letter
     public LetterType LetterType { get; }
 
     public bool IsEmpty { get { return Text.Length == 0; } }
+    public bool IsWhitespace { get { return Text == " " || Text == " "; } }
     public bool IsBlue { get { return LetterType.IsBlue; } }
     public bool IsItalic { get { return LetterType.IsItalic; } }
     public bool IsBold { get { return LetterType.IsBold; } }

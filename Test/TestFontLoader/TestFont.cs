@@ -30,6 +30,7 @@ public class TestFont
         Font TestFont = new("Test", TestAssembly, CellTable);
         Assert.AreEqual(0, TestFont.ProgressTable.Count);
         Assert.AreEqual(0, TestFont.CharacterTable.Count);
+        Assert.AreEqual(0, TestFont.SupportedLetterTypes.Count);
     }
 
     internal static Dictionary<Letter, FontBitmapCell> FillCellTable()

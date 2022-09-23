@@ -1,5 +1,6 @@
 ﻿namespace FontLoader;
 
+using System;
 using System.Diagnostics;
 
 [DebuggerDisplay("{FontSize}")]
@@ -13,7 +14,7 @@ public record LetterTypeBitmap
         SourceBitmap = sourceBitmap;
 
         CellSize = Font.FontSizeToCellSize(SourceBitmap.FontSize);
-        Baseline = (int)(CellSize * FontBitmapCollection.DefaultBaselineRatio);
+        Baseline = (int)Math.Round(CellSize * FontBitmapCollection.DefaultBaselineRatio);
     }
     #endregion
 

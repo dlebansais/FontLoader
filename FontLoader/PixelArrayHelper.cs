@@ -1,6 +1,7 @@
 ﻿namespace FontLoader;
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 
 public static class PixelArrayHelper
@@ -452,6 +453,44 @@ public static class PixelArrayHelper
         return Result;
     }
 
+    public static PixelArray Replace(PixelArray p1, PixelArray p2)
+    {
+        p1.CommitSource();
+        p2.CommitSource();
+
+        Debug.Assert(p1.Width <= p2.Width);
+
+        int Baseline = Math.Max(p1.Baseline, p2.Baseline);
+        int Width = p2.Width;
+        int Height = Baseline + Math.Max(p1.Height - p1.Baseline, p2.Height - p2.Baseline);
+
+        PixelArray Result = new PixelArray(Width, Height, Baseline);
+
+        for (int x = 0; x < Width; x++)
+        {
+            bool IsWhite = true;
+            int ColoredCount = 0;
+
+            for (int y = 0; y < Height; y++)
+            {
+                int y1 = y - Baseline + p1.Baseline;
+                int y2 = y - Baseline + p2.Baseline;
+
+                if (x < p1.Width && y1 >= 0 && y1 < p1.Height)
+                    CopyPixel(p1, x, y1, Result, x, y, ref IsWhite, ref ColoredCount);
+                else if (y2 >= 0 && y2 < p2.Height)
+                    CopyPixel(p2, x, y2, Result, x, y, ref IsWhite, ref ColoredCount);
+                else
+                    Result.ClearPixel(x, y);
+            }
+
+            Result.SetWhiteColumn(x, IsWhite);
+            Result.SetColoredCountColumn(x, ColoredCount);
+        }
+
+        return Result;
+    }
+
     public static PixelArray CutRight(PixelArray p1, int endCutoff)
     {
         p1.CommitSource();
@@ -533,5 +572,35 @@ public static class PixelArrayHelper
         }
 
         return Result;
+    }
+
+    public static int Distance(PixelArray p1, PixelArray p2)
+    {
+        int MinY = Math.Min(-p1.Baseline, -p2.Baseline);
+        int MaxY = Math.Max(p1.Height - p1.Baseline, p2.Height - p2.Baseline);
+        int Distance = int.MaxValue;
+
+        for (int y = MinY; y < MaxY; y++)
+        {
+            int y1 = y + p1.Baseline;
+            int y2 = y + p2.Baseline;
+
+            if (y1 >= 0 && y1 < p1.Height && y2 >= 0 && y2 < p2.Height)
+            {
+                int Left = 0;
+                int Right = 0;
+
+                while (Left < p1.Width && p1.IsWhite(p1.Width - 1 - Left, y1))
+                    Left++;
+                while (Right < p2.Width && p2.IsWhite(Right, y2))
+                    Right++;
+
+                int TotalWhite = Left + Right;
+                if (Distance > TotalWhite)
+                    Distance = TotalWhite;
+            }
+        }
+
+        return Distance;
     }
 }

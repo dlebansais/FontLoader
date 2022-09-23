@@ -17,8 +17,10 @@ public class Font
         Name = fontName;
         ProgressTable = FillProgressTable(fontAssembly);
 
-        FontBitmapCollection Bitmap = FillFontBitmap(fontAssembly);
-        CharacterTable = FillCharacterTable(Bitmap, cellTable);
+        FontBitmapCollection BitmapCollection = FillFontBitmap(fontAssembly);
+        CharacterTable = FillCharacterTable(BitmapCollection, cellTable);
+        SupportedLetterTypes = BitmapCollection.SupportedLetterTypes;
+        FontSizeList = GetFontSizeList(SupportedLetterTypes);
     }
 
     private Dictionary<char, PixelArray> FillProgressTable(Assembly fontAssembly)
@@ -199,12 +201,27 @@ public class Font
 
         characterTable.Add(NewLetter, cellArray);
     }
+
+    private static List<double> GetFontSizeList(List<LetterType> letterTypeList)
+    {
+        List<double> FontSizeList = new();
+
+        foreach (LetterType Item in letterTypeList)
+            if (!FontSizeList.Contains(Item.FontSize))
+                FontSizeList.Add(Item.FontSize);
+
+        FontSizeList.Sort();
+
+        return FontSizeList;
+    }
     #endregion
 
     #region Properties
     public string Name { get; }
     public Dictionary<char, PixelArray> ProgressTable { get; }
     public Dictionary<Letter, PixelArray> CharacterTable { get; }
+    public List<LetterType> SupportedLetterTypes { get; }
+    public List<double> FontSizeList { get; }
     #endregion
 
     #region Tools

@@ -635,6 +635,46 @@ public class TestPixelArrayHelper
         Assert.IsFalse(TestPixelArray.IsClipped);
     }
 
+    [Test]
+    public void ReplaceTest()
+    {
+        Assembly TestAssembly = Assembly.GetExecutingAssembly();
+
+        Stream BlackBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestPixelArray).Namespace}.Black.png");
+        Bitmap BlackBitmap = new Bitmap(BlackBitmapStream);
+        PixelArray BlackPixelArray = PixelArray.FromBitmap(BlackBitmap);
+
+        Stream BigBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestPixelArray).Namespace}.Big.png");
+        Bitmap BigBitmap = new Bitmap(BigBitmapStream);
+        PixelArray BigPixelArray = PixelArray.FromBitmap(BigBitmap);
+
+        PixelArray ReplacedPixelArray = PixelArrayHelper.Replace(BlackPixelArray, BigPixelArray);
+        Assert.AreEqual(ReplacedPixelArray.Width, BigPixelArray.Width);
+        Assert.AreEqual(ReplacedPixelArray.Height, BigPixelArray.Height);
+    }
+
+    [Test]
+    public void DistanceTest()
+    {
+        Assembly TestAssembly = Assembly.GetExecutingAssembly();
+
+        Stream BlackBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestPixelArray).Namespace}.Black.png");
+        Bitmap BlackBitmap = new Bitmap(BlackBitmapStream);
+        PixelArray BlackPixelArray = PixelArray.FromBitmap(BlackBitmap);
+
+        Stream MixedBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestPixelArray).Namespace}.Mixed.png");
+        Bitmap MixedBitmap = new Bitmap(MixedBitmapStream);
+        PixelArray MixedPixelArray = PixelArray.FromBitmap(MixedBitmap);
+
+        int Distance;
+
+        Distance = PixelArrayHelper.Distance(BlackPixelArray, MixedPixelArray);
+        Assert.Less(0, Distance);
+
+        Distance = PixelArrayHelper.Distance(BlackPixelArray, BlackPixelArray);
+        Assert.AreEqual(0, Distance);
+    }
+
     private FontBitmapStream CreateTestStream()
     {
         var FontAssembly = typeof(Dummy).Assembly;
