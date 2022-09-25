@@ -21,47 +21,53 @@ public record Letter
     public static readonly Letter SpecialJItalic = new(' ', 'j', LetterType.Italic);
     public static readonly Letter SubscriptReserved = new(' ', '®', LetterType.Normal);
 
-    private Letter(LetterType letterType)
-    {
-        Text = string.Empty;
-        LetterType = letterType;
-    }
-
     private Letter(string text)
+        : this(text, LetterType.Normal)
     {
-        Text = text;
-        LetterType = LetterType.Normal;
     }
 
-    private Letter(char character1, char character2, LetterType letterType)
+    private Letter(LetterType letterType)
+        : this(string.Empty, letterType)
     {
-        Text = $"{character1}{character2}";
-        LetterType = letterType;
     }
 
     public Letter(char character, LetterType letterType)
+        : this(character.ToString(), letterType)
     {
-        Text = character.ToString();
-        LetterType = letterType;
+    }
+
+    private Letter(char character1, char character2, LetterType letterType)
+        : this($"{character1}{character2}", letterType)
+    {
+    }
+
+    public Letter(Letter template, LetterType letterType)
+        : this(template.Text, letterType)
+    {
     }
 
     public Letter(string text, LetterType letterType)
     {
         Text = text;
         LetterType = letterType;
+        IsWhitespace = LetterHelper.IsWhitespace(text);
+        IsSingleGlyph = LetterHelper.IsSingleGlyph(text);
     }
 
-    public Letter(Letter template, LetterType letterType)
+    public Letter(string text, LetterType letterType, bool isWhitespace, bool isSingleGlyph)
     {
-        Text = template.Text;
+        Text = text;
         LetterType = letterType;
+        IsWhitespace = isWhitespace;
+        IsSingleGlyph = isSingleGlyph;
     }
 
     public string Text { get; }
     public LetterType LetterType { get; }
+    public bool IsWhitespace { get; }
+    public bool IsSingleGlyph { get; }
 
     public bool IsEmpty { get { return Text.Length == 0; } }
-    public bool IsWhitespace { get { return Text == " " || Text == " "; } }
     public bool IsBlue { get { return LetterType.IsBlue; } }
     public bool IsItalic { get { return LetterType.IsItalic; } }
     public bool IsBold { get { return LetterType.IsBold; } }

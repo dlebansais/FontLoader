@@ -453,18 +453,18 @@ public static class PixelArrayHelper
         return Result;
     }
 
-    public static PixelArray Replace(PixelArray p1, PixelArray p2)
+    public static PixelArray Replace(PixelArray p1, PixelArray p2, int verticalOffset)
     {
         p1.CommitSource();
         p2.CommitSource();
 
         Debug.Assert(p1.Width <= p2.Width);
 
-        int Baseline = Math.Max(p1.Baseline, p2.Baseline);
+        int Baseline = Math.Max(p1.Baseline, p2.Baseline - verticalOffset);
         int Width = p2.Width;
-        int Height = Baseline + Math.Max(p1.Height - p1.Baseline, p2.Height - p2.Baseline);
+        int Height = Baseline + Math.Max(p1.Height - p1.Baseline, p2.Height - p2.Baseline + verticalOffset);
 
-        PixelArray Result = new PixelArray(Width, Height, Baseline);
+        PixelArray Result = new PixelArray(Width, Height, Baseline + verticalOffset);
 
         for (int x = 0; x < Width; x++)
         {
@@ -474,7 +474,7 @@ public static class PixelArrayHelper
             for (int y = 0; y < Height; y++)
             {
                 int y1 = y - Baseline + p1.Baseline;
-                int y2 = y - Baseline + p2.Baseline;
+                int y2 = y - Baseline + p2.Baseline - verticalOffset;
 
                 if (x < p1.Width && y1 >= 0 && y1 < p1.Height)
                     CopyPixel(p1, x, y1, Result, x, y, ref IsWhite, ref ColoredCount);

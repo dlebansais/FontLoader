@@ -30,8 +30,11 @@ public record LetterType
     public bool IsItalic { get; }
     public bool IsBold { get; }
 
+    [DebuggerHidden]
     public string BlueTag { get { return IsBlue ? "§" : string.Empty; } }
+    [DebuggerHidden]
     public string ItalicTag { get { return IsItalic ? "*" : string.Empty; } }
+    [DebuggerHidden]
     public string BoldTag { get { return IsBold ? "#" : string.Empty; } }
 
     public static bool IsSameType(LetterType l1, LetterType l2)

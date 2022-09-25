@@ -648,7 +648,7 @@ public class TestPixelArrayHelper
         Bitmap BigBitmap = new Bitmap(BigBitmapStream);
         PixelArray BigPixelArray = PixelArray.FromBitmap(BigBitmap);
 
-        PixelArray ReplacedPixelArray = PixelArrayHelper.Replace(BlackPixelArray, BigPixelArray);
+        PixelArray ReplacedPixelArray = PixelArrayHelper.Replace(BlackPixelArray, BigPixelArray, 0);
         Assert.AreEqual(ReplacedPixelArray.Width, BigPixelArray.Width);
         Assert.AreEqual(ReplacedPixelArray.Height, BigPixelArray.Height);
     }
