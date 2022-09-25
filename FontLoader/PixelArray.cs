@@ -134,7 +134,7 @@ public class PixelArray
 
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     public int Width
-    { 
+    {
         get
         {
             CommitSource();

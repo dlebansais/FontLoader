@@ -13,7 +13,7 @@ public record LetterType
     public static readonly LetterType ItalicBold = new(true, true);
 
     private LetterType(bool isItalic, bool isBold)
-        : this(fontSize:0, isBlue: false, isItalic, isBold)
+        : this(fontSize: 0, isBlue: false, isItalic, isBold)
     {
     }
 
