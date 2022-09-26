@@ -18,6 +18,7 @@ public class TestLetter
         Assert.IsFalse(LetterANormal.IsItalic);
         Assert.IsFalse(LetterANormal.IsBold);
         Assert.IsFalse(LetterANormal.IsWhitespace);
+        Assert.IsTrue(LetterANormal.IsSingleGlyph);
 
         Letter LetterSTNormal = new("st", LetterType.Normal);
         Assert.AreEqual("st", LetterSTNormal.Text);
@@ -28,6 +29,30 @@ public class TestLetter
         Assert.IsFalse(LetterSTNormal.IsItalic);
         Assert.IsFalse(LetterSTNormal.IsBold);
         Assert.IsFalse(LetterSTNormal.IsWhitespace);
+        Assert.IsFalse(LetterSTNormal.IsSingleGlyph);
+
+        Assert.IsTrue(LetterHelper.IsWhitespace(LetterHelper.NoBreakSpace));
+        Letter LetterWhitespace = new(LetterHelper.NoBreakSpace, LetterType.Normal);
+        Assert.AreEqual($"{LetterHelper.NoBreakSpace}", LetterWhitespace.Text);
+        Assert.AreEqual(LetterType.Normal, LetterWhitespace.LetterType);
+        Assert.IsFalse(LetterWhitespace.IsEmpty);
+        Assert.AreEqual($"{LetterHelper.NoBreakSpace}", LetterWhitespace.DisplayText);
+        Assert.IsFalse(LetterWhitespace.IsBlue);
+        Assert.IsFalse(LetterWhitespace.IsItalic);
+        Assert.IsFalse(LetterWhitespace.IsBold);
+        Assert.IsTrue(LetterWhitespace.IsWhitespace);
+        Assert.IsTrue(LetterWhitespace.IsSingleGlyph);
+
+        Letter LetterAForced = new("a", LetterType.Italic, isWhitespace: true, isSingleGlyph: false);
+        Assert.AreEqual("a", LetterAForced.Text);
+        Assert.AreEqual(LetterType.Italic, LetterAForced.LetterType);
+        Assert.IsFalse(LetterAForced.IsEmpty);
+        Assert.AreEqual($"{LetterAForced.LetterType.ItalicTag}a", LetterAForced.DisplayText);
+        Assert.IsFalse(LetterAForced.IsBlue);
+        Assert.IsTrue(LetterAForced.IsItalic);
+        Assert.IsFalse(LetterAForced.IsBold);
+        Assert.IsTrue(LetterAForced.IsWhitespace);
+        Assert.IsFalse(LetterAForced.IsSingleGlyph);
     }
 
     [Test]

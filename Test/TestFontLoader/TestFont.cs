@@ -31,6 +31,7 @@ public class TestFont
         Assert.AreEqual(0, TestFont.ProgressTable.Count);
         Assert.AreEqual(0, TestFont.CharacterTable.Count);
         Assert.AreEqual(0, TestFont.SupportedLetterTypes.Count);
+        Assert.AreEqual(0, TestFont.FontSizeList.Count);
     }
 
     internal static Dictionary<Letter, FontBitmapCell> FillCellTable()
