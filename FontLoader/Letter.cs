@@ -5,7 +5,7 @@ using System.Diagnostics;
 [DebuggerDisplay("{DisplayText,nq}")]
 public record Letter
 {
-    public static readonly Letter EmptyNormal = new(LetterType.Normal);
+    public static readonly Letter EmptyNormal = new();
     /*
     public static readonly Letter EmptyItalic = new(LetterType.Italic);
     public static readonly Letter EmptyBold = new(LetterType.Bold);
@@ -21,13 +21,13 @@ public record Letter
     public static readonly Letter SpecialJItalic = new(' ', 'j', LetterType.Italic);
     public static readonly Letter SubscriptReserved = new(' ', '®', LetterType.Normal);
 
-    private Letter(string text)
-        : this(text, LetterType.Normal)
+    private Letter()
+        : this(string.Empty, LetterType.Normal)
     {
     }
 
-    private Letter(LetterType letterType)
-        : this(string.Empty, letterType)
+    private Letter(string text)
+        : this(text, LetterType.Normal)
     {
     }
 
@@ -54,6 +54,7 @@ public record Letter
         IsSingleGlyph = LetterHelper.IsSingleGlyph(text);
     }
 
+    [System.Text.Json.Serialization.JsonConstructor]
     public Letter(string text, LetterType letterType, bool isWhitespace, bool isSingleGlyph)
     {
         Text = text;
