@@ -24,6 +24,16 @@ public record Letter
     private Letter()
         : this(string.Empty, LetterType.Normal)
     {
+        int X = 5;
+        bool IsPositive = X >= 0;
+        bool IsOdd = X % 2 == 1;
+
+        for (int i = 0; i < 2; i++)
+            if (IsPositive || IsOdd)
+            {
+                IsPositive= false;
+                IsOdd = false;
+            }
     }
 
     private Letter(string text)
