@@ -29,12 +29,20 @@ public record Letter
         bool IsOdd = X % 2 == 1;
 
         for (int i = 0; i < 2; i++)
-            if (IsPositive ||
-                IsOdd)
+        {
+            bool Test1 = false;
+
+            if (IsPositive)
+                Test1 = true;
+            else if (IsOdd)
+                Test1 = true;
+
+            if (Test1)
             {
-                IsPositive= false;
+                IsPositive = false;
                 IsOdd = false;
             }
+        }
     }
 
     private Letter(string text)
