@@ -29,7 +29,8 @@ public record Letter
         bool IsOdd = X % 2 == 1;
 
         for (int i = 0; i < 2; i++)
-            if (IsPositive || IsOdd)
+            if (IsPositive ||
+                IsOdd)
             {
                 IsPositive= false;
                 IsOdd = false;
