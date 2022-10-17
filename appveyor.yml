@@ -49,17 +49,17 @@ after_build:
   - if exist nuget-debug\%APPVEYOR_PROJECT_NAME%-Debug.nuspec nuget pack nuget-debug\%APPVEYOR_PROJECT_NAME%-Debug.nuspec
 
 before_test:
-  - nuget install OpenCover -Version $env:opencover_version -OutputDirectory packages
-  - nuget install CodecovUploader -Version $env:codecov_version -OutputDirectory packages
+  - nuget install OpenCover -Version %opencover_version% -OutputDirectory packages
+  - nuget install CodecovUploader -Version %codecov_version% -OutputDirectory packages
   - |-
     printf "@echo ************************************************************** Starting Tests..\n" > runtests.bat
     printf "dotnet test --no-build -l "console;verbosity=detailed" -c %CONFIGURATION%\n" >> runtests.bat
 
 test_script:
-  - .\packages\OpenCover.$env:opencover_version\tools\OpenCover.Console.exe -register:user -target:"runtests.bat" -filter:"+[%APPVEYOR_PROJECT_NAME%*]* -[Test%APPVEYOR_PROJECT_NAME%*]*" -output:"Coverage-%APPVEYOR_PROJECT_NAME%.xml"
+  - .\packages\OpenCover.%opencover_version%\tools\OpenCover.Console.exe -register:user -target:"runtests.bat" -filter:"+[%APPVEYOR_PROJECT_NAME%*]* -[Test%APPVEYOR_PROJECT_NAME%*]*" -output:"Coverage-%APPVEYOR_PROJECT_NAME%.xml"
 
 after_test:
-  - .\packages\CodecovUploader.$env:codecov_version\tools\codecov.exe -f "Coverage-%APPVEYOR_PROJECT_NAME%.xml"
+  - .\packages\CodecovUploader.%codecov_version%\tools\codecov.exe -f "Coverage-%APPVEYOR_PROJECT_NAME%.xml"
 
 artifacts:
   - path: $(APPVEYOR_PROJECT_NAME)-Debug.*.nupkg
