@@ -51,13 +51,13 @@ before_test:
   - nuget install CodecovUploader -Version 0.2.4 -OutputDirectory packages
   - |-
     printf "echo ************************************************************** Starting Tests..\n" > runtests.bat
-    printf "echo dotnet test --no-build -l "console;verbosity=detailed" -c %CONFIGURATION%\n" >> runtests.bat
+    printf "dotnet test --no-build -l "console;verbosity=detailed" -c %CONFIGURATION%\n" >> runtests.bat
 
 test_script:
-  - echo "./packages/OpenCover.4.7.1221/tools/OpenCover.Console.exe" -register:user -target:"runtests.bat" -filter:"+[%APPVEYOR_PROJECT_NAME%*]* -[Test%APPVEYOR_PROJECT_NAME%*]*" -output:"Test/temp/Coverage-%APPVEYOR_PROJECT_NAME%.xml"
+  - ./packages/OpenCover.4.7.1221/tools/OpenCover.Console.exe -register:user -target:"runtests.bat" -filter:"+[%APPVEYOR_PROJECT_NAME%*]* -[Test%APPVEYOR_PROJECT_NAME%*]*" -output:"Test/temp/Coverage-%APPVEYOR_PROJECT_NAME%.xml"
 
 after_test:
-  - echo "packages/CodecovUploader.0.2.4/tools/codecov.exe" -f "Test/temp/Coverage-%APPVEYOR_PROJECT_NAME%.xml"
+  - ./packages/CodecovUploader.0.2.4/tools/codecov.exe -f "Test/temp/Coverage-%APPVEYOR_PROJECT_NAME%.xml"
 
 artifacts:
   - path: $(APPVEYOR_PROJECT_NAME)-Debug.*.nupkg
