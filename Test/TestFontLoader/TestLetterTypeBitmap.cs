@@ -29,9 +29,11 @@ public class TestLetterTypeBitmap
         Assert.AreEqual(TestFontSize, TestObject.FontSize);
 
         int TestCellSize = Font.FontSizeToCellSize(TestFontBitmap.FontSize);
+
         Assert.AreEqual(TestCellSize, TestObject.CellSize);
 
         int TestBaseline = (int)(TestCellSize * FontBitmapCollection.DefaultBaselineRatio);
+
         Assert.AreEqual(TestBaseline, TestObject.Baseline);
     }
 
@@ -43,15 +45,11 @@ public class TestLetterTypeBitmap
         LetterTypeBitmap TestObject = new(0, 0, TestFontBitmap);
 
         TestObject.GetBitmapBytes(out byte[] ArgbValues, out int Stride);
-
         Assert.NotNull(ArgbValues);
         Assert.Less(0, Stride);
-
         TestObject.GetBitmapBytes(out byte[] OtherArgbValues, out int OtherStride);
-
         Assert.AreEqual(OtherArgbValues, ArgbValues);
         Assert.IsFalse(OtherArgbValues == ArgbValues);
-
         Assert.AreEqual(OtherStride, Stride);
     }
 
@@ -59,6 +57,7 @@ public class TestLetterTypeBitmap
     {
         var FontAssembly = typeof(Dummy).Assembly;
         var ResourceName = $"{typeof(Dummy).Namespace}.FullFontResources.Test._{TestFontSize}.black.normal.png";
+
         return new FontBitmapStream(FontAssembly, ResourceName, TestFontSize);
     }
 

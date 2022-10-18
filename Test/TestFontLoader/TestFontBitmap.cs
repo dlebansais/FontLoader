@@ -59,31 +59,34 @@ public class TestFontBitmap
                 }
 
                 Bitmap OtherBitmap = TestObject.LoadBitmap();
-                Assert.Throws<ArgumentException>(() => { _ = OtherBitmap.Width; });
+
+                Assert.Throws<ArgumentException>(() =>
+                {
+                    _ = OtherBitmap.Width;
+                });
             }
         }
     }
+
 
     [Test]
     public void GetBitmapBytesTest()
     {
         using FontBitmapStream TestStream = CreateTestStream();
         using FontBitmap TestObject = new FontBitmap(TestStream);
-
         Bitmap TestBitmap = TestObject.LoadBitmap();
         Rectangle Rect = new Rectangle(0, 0, TestBitmap.Width, TestBitmap.Height);
         BitmapData Data = TestBitmap.LockBits(Rect, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
         int TestStride = Math.Abs(Data.Stride);
         int ByteCount = TestStride * TestBitmap.Height;
         byte[] TestArgbValues = new byte[ByteCount];
+
         Marshal.Copy(Data.Scan0, TestArgbValues, 0, ByteCount);
         TestBitmap.UnlockBits(Data);
-
         TestObject.GetBitmapBytes(out byte[] ArgbValues, out int Stride, out int Width, out int Height);
         Assert.AreEqual(TestStride, Stride);
         Assert.AreEqual(TestBitmap.Width, Width);
         Assert.AreEqual(TestBitmap.Height, Height);
-
         Assert.AreEqual(TestArgbValues.Length, ArgbValues.Length);
 
         for (int i = 0; i < ArgbValues.Length; i++)
@@ -94,6 +97,7 @@ public class TestFontBitmap
     {
         var FontAssembly = typeof(Dummy).Assembly;
         var ResourceName = $"{typeof(Dummy).Namespace}.FullFontResources.Test._{TestFontSize}.black.normal.png";
+
         return new FontBitmapStream(FontAssembly, ResourceName, TestFontSize);
     }
 

@@ -21,7 +21,6 @@ public static class PixelArrayHelper
     {
         byte Pixel1 = p1.GetPixel(x1, y1);
         byte Pixel2 = p2.GetPixel(x2, y2);
-
         byte Pixel;
 
         if (Pixel1 != 0xFF && Pixel2 != 0xFF)
@@ -96,12 +95,13 @@ public static class PixelArrayHelper
 
         int Width = p1.Width;
         int Height = p1.Height;
-
         int BaselineDifference = p2.Baseline - p1.Baseline + verticalOffset;
+
         if (BaselineDifference != 0)
             return false;
 
         int DiffTotal = 0;
+        
         //int MaxSupportedDiff = (int)((Width * Height) * MaxSuportedDiffRatio);
         int MaxSupportedDiff = 5;
 
@@ -117,6 +117,7 @@ public static class PixelArrayHelper
                 if (DiffTotal > MaxSupportedDiff)
                     return false;
             }
+
 
         return true;
     }
@@ -143,6 +144,7 @@ public static class PixelArrayHelper
                     return false;
             }
 
+
         return true;
     }
 
@@ -150,18 +152,16 @@ public static class PixelArrayHelper
     {
         int Baseline1 = p1.Baseline;
         int Baseline2 = p2.Baseline + verticalOffset;
-
         int Width = Math.Max(p1.Width, p2.Width);
         int Baseline = Math.Max(Baseline1, Baseline2);
         int Height = Baseline + Math.Max(p1.Height - Baseline1, p2.Height - Baseline2);
-
         int DiffTotal = 0;
+        
         //int MaxSupportedDiff = (int)((Width * Height) * MaxSuportedDiffRatio);
         int MaxSupportedDiff = 5;
 
         p1.CommitSource();
         p2.CommitSource();
-
         firstDiffX = -1;
 
         for (int x = 0; x < Width; x++)
@@ -219,14 +219,11 @@ public static class PixelArrayHelper
 
         int Baseline1 = p1.Baseline;
         int Baseline2 = p2.Baseline + verticalOffset;
-
         int Width = Math.Max(p1.Width, p2.Width);
         int Baseline = Math.Max(Baseline1, Baseline2);
         int Height = Baseline + Math.Max(p1.Height - Baseline1, p2.Height - Baseline2);
-
         int DiffTotal = 0;
         int MaxSupportedDiff = (int)((Width * Height) * MaxSuportedDiffRatio);
-
         bool[,] PixelSoftTaken = new bool[Width, Height];
         bool[,] PixelHardTaken = new bool[Width, Height];
         int PerfectMatchWidth = (int)(Width * (1.0 - perfectMatchRatio));
@@ -314,11 +311,9 @@ public static class PixelArrayHelper
 
         int Baseline1 = p1.Baseline;
         int Baseline2 = p2.Baseline + verticalOffset;
-
         int Width = Math.Max(p1.Width, p2.Width);
         int Baseline = Math.Max(Baseline1, Baseline2);
         int Height = Baseline + Math.Max(p1.Height - Baseline1, p2.Height - Baseline2);
-
         int DiffTotal = 0;
         int MaxSupportedDiff = (int)((Width * Height) * MaxSuportedDiffRatio);
 
@@ -398,8 +393,8 @@ public static class PixelArrayHelper
     private static bool IsMatchPixedValue(uint rgb1, uint rgb2, ref int diffTotal)
     {
         int Diff = Math.Abs((int)rgb1 - (int)rgb2);
-        diffTotal += Diff;
 
+        diffTotal += Diff;
         return Diff <= 5;
     }
 
@@ -407,7 +402,6 @@ public static class PixelArrayHelper
     {
         Debug.Assert(p1.Width >= testWidth);
         Debug.Assert(p2.Width >= testWidth);
-
         p1.CommitSource();
         p2.CommitSource();
 
@@ -422,7 +416,6 @@ public static class PixelArrayHelper
     {
         p1.CommitSource();
         p2.CommitSource();
-
         return Merge(p1, offsetY, p2, inside, p1.Width - inside + p2.Width);
     }
 
@@ -435,7 +428,6 @@ public static class PixelArrayHelper
         int TotalWidth = p1.Width - inside + p2.Width;
         int Width = Math.Min(p1.Width - inside + p2.Width, maxWidth);
         int Height = Baseline + Math.Max(p1.Height - p1.Baseline, p2.Height - p2.Baseline - offsetY);
-
         PixelArray Result = new PixelArray(Width, Height, Baseline);
 
         for (int x = 0; x < Width; x++)
@@ -457,13 +449,11 @@ public static class PixelArrayHelper
     {
         p1.CommitSource();
         p2.CommitSource();
-
         Debug.Assert(p1.Width <= p2.Width);
 
         int Baseline = Math.Max(p1.Baseline, p2.Baseline - verticalOffset);
         int Width = p2.Width;
         int Height = Baseline + Math.Max(p1.Height - p1.Baseline, p2.Height - p2.Baseline + verticalOffset);
-
         PixelArray Result = new PixelArray(Width, Height, Baseline + verticalOffset);
 
         for (int x = 0; x < Width; x++)
@@ -549,6 +539,7 @@ public static class PixelArrayHelper
 
         int TopHeight = Math.Max(p2.Baseline - p1.Baseline, 0);
         int BottomHeight = Math.Max((p2.Height - p2.Baseline) - (p1.Height - p1.Baseline), 0);
+
         Debug.Assert(TopHeight > 0 || BottomHeight > 0);
 
         PixelArray Result = new PixelArray(p1.Width, TopHeight + p1.Height + BottomHeight, p1.Baseline + TopHeight);
@@ -592,10 +583,12 @@ public static class PixelArrayHelper
 
                 while (Left < p1.Width && p1.IsWhite(p1.Width - 1 - Left, y1))
                     Left++;
+
                 while (Right < p2.Width && p2.IsWhite(Right, y2))
                     Right++;
 
                 int TotalWhite = Left + Right;
+
                 if (Distance > TotalWhite)
                     Distance = TotalWhite;
             }

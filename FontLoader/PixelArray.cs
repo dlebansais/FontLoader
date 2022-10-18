@@ -28,7 +28,6 @@ public class PixelArray
     {
         Debug.Assert(width > 0);
         Debug.Assert(height > 0);
-
         _Width = width;
         Height = height;
         Baseline = baseline;
@@ -72,6 +71,7 @@ public class PixelArray
                 int G = argbValues[ArgbValuesOffset + 1];
                 int R = argbValues[ArgbValuesOffset + 2];
                 int Pixel = (clearEdge && (x == 0 || y == 0)) ? 0xFF : (R + G + B) / 3;
+
                 Array[ArrayOffset] = (byte)Pixel;
 
                 if (Pixel != 0xFF)
@@ -110,19 +110,14 @@ public class PixelArray
         int BitmapWidth = bitmap.Width;
         int BitmapHeight = bitmap.Height;
         int Baseline = BitmapHeight - baselineDiff;
-
         Rectangle FullRect = new Rectangle(0, 0, BitmapWidth, BitmapHeight);
         BitmapData Data = bitmap.LockBits(FullRect, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-
         int Stride = Math.Abs(Data.Stride);
-
         int ByteCount = Data.Stride * BitmapHeight;
         byte[] ArgbValues = new byte[ByteCount];
 
         Marshal.Copy(Data.Scan0, ArgbValues, 0, ByteCount);
-
         bitmap.UnlockBits(Data);
-
         return new PixelArray(ArgbValues, Stride, rect.Left, rect.Width, rect.Top, rect.Height, Baseline, clearEdges: false);
     }
 
@@ -141,11 +136,12 @@ public class PixelArray
             return _Width;
         }
     }
+
     private int _Width;
 
     public int Height { get; private set; }
-
     public int Baseline { get; private set; }
+
     private byte[] Array;
     private bool[] WhiteColumn;
     private int[] ColoredCountColumn;
@@ -154,7 +150,6 @@ public class PixelArray
     public byte GetPixel(int x, int y)
     {
         Debug.Assert(IsLoaded);
-
         return Array[x + y * _Width];
     }
 
@@ -196,7 +191,6 @@ public class PixelArray
     public bool IsColored(int x, int y, out byte color)
     {
         Debug.Assert(IsLoaded);
-
         color = Array[x + y * _Width];
 
         bool IsWhite = color == 0xFF;
@@ -209,7 +203,6 @@ public class PixelArray
     public PixelArray Clipped()
     {
         CommitSource();
-
         GetClipZone(out int LeftEdge, out int TopEdge, out int RightEdge, out int BottomEdge);
 
         if (LeftEdge < RightEdge && TopEdge < BottomEdge)
@@ -230,6 +223,7 @@ public class PixelArray
         for (leftEdge = 0; leftEdge < _Width; leftEdge++)
         {
             bool IsEmptyColumn = true;
+
             for (int y = 0; y < Height; y++)
             {
                 if (!IsWhite(leftEdge, y))
@@ -246,6 +240,7 @@ public class PixelArray
         for (rightEdge = _Width; rightEdge > 0; rightEdge--)
         {
             bool IsEmptyColumn = true;
+
             for (int y = 0; y < Height; y++)
             {
                 if (!IsWhite(rightEdge - 1, y))
@@ -262,6 +257,7 @@ public class PixelArray
         for (topEdge = 0; topEdge < Height; topEdge++)
         {
             bool IsEmptyLine = true;
+
             for (int x = 0; x < _Width; x++)
             {
                 if (!IsWhite(x, topEdge))
@@ -275,10 +271,10 @@ public class PixelArray
                 break;
         }
 
-
         for (bottomEdge = Height; bottomEdge > 0; bottomEdge--)
         {
             bool IsEmptyLine = true;
+
             for (int x = 0; x < _Width; x++)
             {
                 if (!IsWhite(x, bottomEdge - 1))
@@ -319,11 +315,11 @@ public class PixelArray
             if (IsLoaded)
             {
                 bool Result = true;
+
                 Result &= IsClippedColumn(0);
                 Result &= IsClippedColumn(_Width - 1);
                 Result &= IsClippedRow(0);
                 Result &= IsClippedRow(Height - 1);
-
                 return Result;
             }
             else
@@ -334,6 +330,7 @@ public class PixelArray
     internal bool IsClippedColumn(int column)
     {
         bool WhiteColumn = true;
+
         for (int y = 0; y < Height; y++)
             if (!IsWhite(column, y))
             {
@@ -347,6 +344,7 @@ public class PixelArray
     internal bool IsClippedRow(int row)
     {
         bool IsWhiteRow = true;
+
         for (int x = 0; x < _Width; x++)
             if (!IsWhite(x, row))
             {
@@ -408,20 +406,18 @@ public class PixelArray
         if (SourceBitmap is not null && !IsLoaded)
         {
             SourceBitmap.GetBitmapBytes(out byte[] ArgbValues, out int Stride);
-
             Debug.Assert(_Width == SourceBitmap.CellSize);
             Debug.Assert(Height == SourceBitmap.CellSize);
             Debug.Assert(Baseline == SourceBitmap.Baseline);
-
             Array = new byte[_Width * Height];
             WhiteColumn = new bool[_Width];
             ColoredCountColumn = new int[_Width];
-
             Load(ArgbValues, Stride, SourceColumn * SourceBitmap.CellSize, SourceRow * SourceBitmap.CellSize, SourceClearEdges);
 
             if (SourceLoadClipped)
             {
                 PixelArray Modified = Clipped();
+
                 _Width = Modified._Width;
                 Height = Modified.Height;
                 Baseline = Modified.Baseline;
@@ -444,6 +440,7 @@ public class PixelArray
             {
                 uint RGB = Array[x + y * _Width];
                 uint Pixel = (((RGB >> 0) & 0xFF) + ((RGB >> 8) & 0xFF) + ((RGB >> 16) & 0xFF)) / 3;
+
                 Result += Pixel < 0x40 ? "X" : (y == Baseline ? "." : " ");
             }
 

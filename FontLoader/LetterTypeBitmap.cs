@@ -12,7 +12,6 @@ public record LetterTypeBitmap
         Columns = columns;
         Rows = rows;
         SourceBitmap = sourceBitmap;
-
         CellSize = Font.FontSizeToCellSize(SourceBitmap.FontSize);
         Baseline = (int)Math.Round(CellSize * FontBitmapCollection.DefaultBaselineRatio);
     }
@@ -21,7 +20,12 @@ public record LetterTypeBitmap
     #region Properties
     public int Columns { get; }
     public int Rows { get; }
-    public double FontSize { get { return SourceBitmap.FontSize; } }
+
+    public double FontSize
+    {
+        get { return SourceBitmap.FontSize; }
+    }
+
     public int CellSize { get; }
     public int Baseline { get; }
     #endregion
@@ -33,9 +37,11 @@ public record LetterTypeBitmap
         Debug.Assert(SourceBitmap.IsLoaded);
 
         int ExpectedCellSize = Width / FontBitmapCollection.DefaultColumns;
+
         Debug.Assert(CellSize == ExpectedCellSize);
 
         int ExpectedWidth = CellSize * FontBitmapCollection.DefaultColumns;
+
         Debug.Assert(Width == ExpectedWidth);
     }
 

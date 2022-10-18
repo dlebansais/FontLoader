@@ -20,7 +20,11 @@ public class FontBitmapStream : IDisposable
     public Assembly FontAssembly { get; }
     public string ResourceName { get; }
     public double FontSize { get; }
-    public bool IsLoaded { get { return LoadedStream is not null; } }
+
+    public bool IsLoaded
+    {
+        get { return LoadedStream is not null; }
+    }
     #endregion
 
     #region Client Interface
@@ -30,8 +34,8 @@ public class FontBitmapStream : IDisposable
             LoadedStream = FontAssembly.GetManifestResourceStream(ResourceName);
 
         Stream? CheckedStream = LoadedStream;
-        Debug.Assert(CheckedStream is not null);
 
+        Debug.Assert(CheckedStream is not null);
         return LoadedStream;
     }
 

@@ -18,6 +18,7 @@ public class Font
         ProgressTable = FillProgressTable(fontAssembly);
 
         FontBitmapCollection BitmapCollection = FillFontBitmap(fontAssembly);
+
         CharacterTable = FillCharacterTable(BitmapCollection, cellTable);
         SupportedLetterTypes = BitmapCollection.SupportedLetterTypes;
         FontSizeList = GetFontSizeList(SupportedLetterTypes);
@@ -46,6 +47,7 @@ public class Font
         character = '\0';
 
         string[] Splitted = resourceName.Split('.');
+
         Debug.Assert(Splitted.Length >= 3);
 
         if (Splitted[Splitted.Length - 3] != "PageResources")
@@ -97,6 +99,7 @@ public class Font
         isBold = false;
 
         string[] Splitted = resourceName.Split('.');
+
         if (Splitted.Length < 7)
             return false;
 
@@ -110,6 +113,7 @@ public class Font
 
         while (FontSizeString.StartsWith("_") || FontSizeString.StartsWith("0"))
             FontSizeString = FontSizeString.Substring(1);
+
         FontSizeString = FontSizeString.Replace("x", ".");
 
         if (!double.TryParse(FontSizeString, NumberStyles.Float, CultureInfo.InvariantCulture, out fontSize))
@@ -182,14 +186,15 @@ public class Font
         return CharacterTable;
     }
 
+
     private void AddLetter(FontBitmapCollection bitmap, int column, int row, Dictionary<Letter, PixelArray> characterTable, Letter letter)
     {
         foreach (LetterType Key in bitmap.SupportedLetterTypes)
             if (LetterType.IsSameType(Key, letter.LetterType))
             {
                 PixelArray CellArray = bitmap.GetPixelArray(column, row, Key, isClipped: true);
-                Debug.Assert(CellArray != PixelArray.Empty);
 
+                Debug.Assert(CellArray != PixelArray.Empty);
                 AddLetter(characterTable, letter, Key.FontSize, Key.IsBlue, CellArray);
             }
     }
@@ -211,7 +216,6 @@ public class Font
                 FontSizeList.Add(Item.FontSize);
 
         FontSizeList.Sort();
-
         return FontSizeList;
     }
     #endregion

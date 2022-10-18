@@ -6,10 +6,12 @@ using System.Diagnostics;
 public record Letter
 {
     public static readonly Letter EmptyNormal = new();
+
     /*
     public static readonly Letter EmptyItalic = new(LetterType.Italic);
     public static readonly Letter EmptyBold = new(LetterType.Bold);
     */
+
     public static readonly Letter Unknown = new("█");
     public static readonly Letter Whitespace = new(" ");
     public static readonly Letter Ignore1 = new("█");
@@ -68,9 +70,28 @@ public record Letter
     public bool IsWhitespace { get; }
     public bool IsSingleGlyph { get; }
 
-    public bool IsEmpty { get { return Text.Length == 0; } }
-    public bool IsBlue { get { return LetterType.IsBlue; } }
-    public bool IsItalic { get { return LetterType.IsItalic; } }
-    public bool IsBold { get { return LetterType.IsBold; } }
-    public string DisplayText { get { return $"{LetterType.BlueTag}{LetterType.ItalicTag}{LetterType.BoldTag}{Text}"; } }
+    public bool IsEmpty
+    {
+        get { return Text.Length == 0; }
+    }
+
+    public bool IsBlue
+    {
+        get { return LetterType.IsBlue; }
+    }
+
+    public bool IsItalic
+    {
+        get { return LetterType.IsItalic; }
+    }
+
+    public bool IsBold
+    {
+        get { return LetterType.IsBold; }
+    }
+
+    public string DisplayText
+    {
+        get { return $"{LetterType.BlueTag}{LetterType.ItalicTag}{LetterType.BoldTag}{Text}"; }
+    }
 }

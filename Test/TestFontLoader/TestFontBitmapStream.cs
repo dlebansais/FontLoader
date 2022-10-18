@@ -49,7 +49,12 @@ public class TestFontBitmapStream
             }
 
             Stream OtherStream = TestObject.LoadStream();
-            Assert.Throws<ObjectDisposedException>(() => { OtherStream.Seek(0, SeekOrigin.Begin); });
+
+            Assert.Throws<ObjectDisposedException>(() =>
+            {
+                OtherStream.Seek(0, SeekOrigin.Begin);
+            });
         }
     }
+
 }

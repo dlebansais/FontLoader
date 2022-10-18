@@ -18,7 +18,6 @@ public class FontBitmapCollection
     {
         SupportedLetterTypes = new List<LetterType>(streamTable.Keys);
         LetterTypeBitmapTable = new();
-
         FillBitmapTable(streamTable, out Dictionary<LetterType, FontBitmap> BitmapTable, out int MaxColumns, out int MaxRows);
 
         if (MaxColumns > 0 && MaxRows > 0)
@@ -30,6 +29,7 @@ public class FontBitmapCollection
             {
                 FontBitmap SourceBitmap = BitmapTable[Key];
                 LetterTypeBitmap NewLetterTypeBitmap = new(Columns, Rows, SourceBitmap);
+
                 LetterTypeBitmapTable.Add(Key, NewLetterTypeBitmap);
             }
         }
@@ -45,6 +45,7 @@ public class FontBitmapCollection
         {
             FontBitmapStream StreamEntry = streamTable[Key];
             FontBitmap NewFontBitmap = new FontBitmap(StreamEntry);
+
             bitmapTable.Add(Key, NewFontBitmap);
 
             if (maxColumns == 0 && maxRows == 0)
@@ -56,7 +57,6 @@ public class FontBitmapCollection
 
                 Debug.Assert(Columns > 0);
                 Debug.Assert(Rows > 0);
-
                 maxColumns = Columns;
                 maxRows = Rows;
             }

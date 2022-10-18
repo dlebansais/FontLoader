@@ -10,6 +10,7 @@ public class TestLetter
     public void BasicTest()
     {
         Letter LetterANormal = new('A', LetterType.Normal);
+
         Assert.AreEqual("A", LetterANormal.Text);
         Assert.AreEqual(LetterType.Normal, LetterANormal.LetterType);
         Assert.IsFalse(LetterANormal.IsEmpty);
@@ -21,6 +22,7 @@ public class TestLetter
         Assert.IsTrue(LetterANormal.IsSingleGlyph);
 
         Letter LetterSTNormal = new("st", LetterType.Normal);
+
         Assert.AreEqual("st", LetterSTNormal.Text);
         Assert.AreEqual(LetterType.Normal, LetterSTNormal.LetterType);
         Assert.IsFalse(LetterSTNormal.IsEmpty);
@@ -30,9 +32,10 @@ public class TestLetter
         Assert.IsFalse(LetterSTNormal.IsBold);
         Assert.IsFalse(LetterSTNormal.IsWhitespace);
         Assert.IsFalse(LetterSTNormal.IsSingleGlyph);
-
         Assert.IsTrue(LetterHelper.IsWhitespace(LetterHelper.NoBreakSpace));
+
         Letter LetterWhitespace = new(LetterHelper.NoBreakSpace, LetterType.Normal);
+
         Assert.AreEqual($"{LetterHelper.NoBreakSpace}", LetterWhitespace.Text);
         Assert.AreEqual(LetterType.Normal, LetterWhitespace.LetterType);
         Assert.IsFalse(LetterWhitespace.IsEmpty);
@@ -44,6 +47,7 @@ public class TestLetter
         Assert.IsTrue(LetterWhitespace.IsSingleGlyph);
 
         Letter LetterAForced = new("a", LetterType.Italic, isWhitespace: true, isSingleGlyph: false);
+
         Assert.AreEqual("a", LetterAForced.Text);
         Assert.AreEqual(LetterType.Italic, LetterAForced.LetterType);
         Assert.IsFalse(LetterAForced.IsEmpty);
@@ -59,8 +63,8 @@ public class TestLetter
     public void TemplateConstructor()
     {
         Letter LetterANormal = new('A', LetterType.Normal);
-
         Letter LetterAItalic = new(LetterANormal, LetterType.Italic);
+
         Assert.AreEqual("A", LetterAItalic.Text);
         Assert.AreEqual(LetterType.Italic, LetterAItalic.LetterType);
         Assert.AreNotEqual("A", LetterAItalic.DisplayText);
@@ -73,6 +77,7 @@ public class TestLetter
     public void PredefinesLetters()
     {
         Letter Combo1 = Letter.EmptyNormal;
+
         Assert.IsTrue(Combo1.IsEmpty);
     }
 }

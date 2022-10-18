@@ -6,7 +6,6 @@ using System.Diagnostics;
 public record LetterType
 {
     public const int MinFontSize = 8;
-
     public static readonly LetterType Normal = new(false, false);
     public static readonly LetterType Italic = new(true, false);
     public static readonly LetterType Bold = new(false, true);
@@ -31,11 +30,22 @@ public record LetterType
     public bool IsBold { get; }
 
     [DebuggerHidden]
-    public string BlueTag { get { return IsBlue ? "§" : string.Empty; } }
+    public string BlueTag
+    {
+        get { return IsBlue ? "§" : string.Empty; }
+    }
+
     [DebuggerHidden]
-    public string ItalicTag { get { return IsItalic ? "*" : string.Empty; } }
+    public string ItalicTag
+    {
+        get { return IsItalic ? "*" : string.Empty; }
+    }
+
     [DebuggerHidden]
-    public string BoldTag { get { return IsBold ? "#" : string.Empty; } }
+    public string BoldTag
+    {
+        get { return IsBold ? "#" : string.Empty; }
+    }
 
     public static bool IsSameType(LetterType l1, LetterType l2)
     {
@@ -46,7 +56,6 @@ public record LetterType
     {
         Debug.Assert(l1.FontSize > 0);
         Debug.Assert(l2.FontSize > 0);
-
         return IsSameType(l1, l2) && l1.FontSize == l2.FontSize;
     }
 
@@ -55,7 +64,6 @@ public record LetterType
         Debug.Assert(l.FontSize == 0);
         Debug.Assert(fontSize >= MinFontSize);
         Debug.Assert(!l.IsBlue);
-
         return new(fontSize, isBlue, l.IsItalic, l.IsBold);
     }
 }

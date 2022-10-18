@@ -13,19 +13,15 @@ public class TestLetterType
         Assert.IsTrue(LetterType.IsSameType(LetterType.Italic, LetterType.Italic));
         Assert.IsTrue(LetterType.IsSameType(LetterType.Bold, LetterType.Bold));
         Assert.IsTrue(LetterType.IsSameType(LetterType.ItalicBold, LetterType.ItalicBold));
-
         Assert.IsFalse(LetterType.IsSameType(LetterType.Normal, LetterType.Italic));
         Assert.IsFalse(LetterType.IsSameType(LetterType.Normal, LetterType.Bold));
         Assert.IsFalse(LetterType.IsSameType(LetterType.Normal, LetterType.ItalicBold));
-
         Assert.IsFalse(LetterType.IsSameType(LetterType.Italic, LetterType.Normal));
         Assert.IsFalse(LetterType.IsSameType(LetterType.Italic, LetterType.Bold));
         Assert.IsFalse(LetterType.IsSameType(LetterType.Italic, LetterType.ItalicBold));
-
         Assert.IsFalse(LetterType.IsSameType(LetterType.Bold, LetterType.Italic));
         Assert.IsFalse(LetterType.IsSameType(LetterType.Bold, LetterType.Normal));
         Assert.IsFalse(LetterType.IsSameType(LetterType.Bold, LetterType.ItalicBold));
-
         Assert.IsFalse(LetterType.IsSameType(LetterType.ItalicBold, LetterType.Italic));
         Assert.IsFalse(LetterType.IsSameType(LetterType.ItalicBold, LetterType.Bold));
         Assert.IsFalse(LetterType.IsSameType(LetterType.ItalicBold, LetterType.Normal));

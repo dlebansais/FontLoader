@@ -20,6 +20,7 @@ public class TestFont
     public void BasicTest()
     {
         Font TestFont = new("Test", typeof(Dummy).Assembly, CellTable);
+
         Assert.AreEqual("Test", TestFont.Name);
     }
 
@@ -28,6 +29,7 @@ public class TestFont
     {
         Assembly TestAssembly = Assembly.GetExecutingAssembly();
         Font TestFont = new("Test", TestAssembly, CellTable);
+
         Assert.AreEqual(0, TestFont.ProgressTable.Count);
         Assert.AreEqual(0, TestFont.CharacterTable.Count);
         Assert.AreEqual(0, TestFont.SupportedLetterTypes.Count);
@@ -81,10 +83,11 @@ public class TestFont
         FillTestTable(FontCellTable, 'û', new FontBitmapCell() { Row = 9, Column = 5 });
         FillTestTable(FontCellTable, 'ü', new FontBitmapCell() { Row = 9, Column = 6 });
         FillTestTable(FontCellTable, 'ć', new FontBitmapCell() { Row = 9, Column = 17 });
-
         FillTestTable(FontCellTable, '‒', new FontBitmapCell() { Row = 11, Column = 0 }); // Short
+
         FillTestTable(FontCellTable, 'œ', new FontBitmapCell() { Row = 11, Column = 1 });
         FillTestTable(FontCellTable, '—', new FontBitmapCell() { Row = 11, Column = 2 }); // Long
+
         FillTestTable(FontCellTable, '…', new FontBitmapCell() { Row = 11, Column = 3 });
         FillTestTable(FontCellTable, '“', new FontBitmapCell() { Row = 11, Column = 4 });
         FillTestTable(FontCellTable, '”', new FontBitmapCell() { Row = 11, Column = 5 });
@@ -103,7 +106,6 @@ public class TestFont
         FillTestTable(FontCellTable, 'ḥ', new FontBitmapCell() { Row = 11, Column = 17 });
         FillTestTable(FontCellTable, 'ṣ', new FontBitmapCell() { Row = 11, Column = 18 });
         FillTestTable(FontCellTable, '’', new FontBitmapCell() { Row = 11, Column = 19 });
-
         return FontCellTable;
     }
 
