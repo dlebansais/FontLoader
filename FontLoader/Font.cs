@@ -63,7 +63,9 @@ public class Font
 
         if (CharacterString == "Slash")
             character = '/';
-        else if (CharacterString.Length == 1 && CharacterString[0] >= '0' && CharacterString[0] <= '9')
+        else if (CharacterString.Length != 1)
+            return false;
+        else if (CharacterString[0] >= '0' && CharacterString[0] <= '9')
             character = CharacterString[0];
         else
             return false;
