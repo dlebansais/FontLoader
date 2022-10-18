@@ -403,29 +403,30 @@ public class PixelArray
     {
         Debug.Assert(SourceBitmap is not null || IsLoaded);
 
-        if (SourceBitmap is not null && !IsLoaded)
-        {
-            SourceBitmap.GetBitmapBytes(out byte[] ArgbValues, out int Stride);
-            Debug.Assert(_Width == SourceBitmap.CellSize);
-            Debug.Assert(Height == SourceBitmap.CellSize);
-            Debug.Assert(Baseline == SourceBitmap.Baseline);
-            Array = new byte[_Width * Height];
-            WhiteColumn = new bool[_Width];
-            ColoredCountColumn = new int[_Width];
-            Load(ArgbValues, Stride, SourceColumn * SourceBitmap.CellSize, SourceRow * SourceBitmap.CellSize, SourceClearEdges);
-
-            if (SourceLoadClipped)
+        if (SourceBitmap is not null)
+            if (!IsLoaded)
             {
-                PixelArray Modified = Clipped();
+                SourceBitmap.GetBitmapBytes(out byte[] ArgbValues, out int Stride);
+                Debug.Assert(_Width == SourceBitmap.CellSize);
+                Debug.Assert(Height == SourceBitmap.CellSize);
+                Debug.Assert(Baseline == SourceBitmap.Baseline);
+                Array = new byte[_Width * Height];
+                WhiteColumn = new bool[_Width];
+                ColoredCountColumn = new int[_Width];
+                Load(ArgbValues, Stride, SourceColumn * SourceBitmap.CellSize, SourceRow * SourceBitmap.CellSize, SourceClearEdges);
 
-                _Width = Modified._Width;
-                Height = Modified.Height;
-                Baseline = Modified.Baseline;
-                Array = Modified.Array;
-                WhiteColumn = Modified.WhiteColumn;
-                ColoredCountColumn = Modified.ColoredCountColumn;
+                if (SourceLoadClipped)
+                {
+                    PixelArray Modified = Clipped();
+
+                    _Width = Modified._Width;
+                    Height = Modified.Height;
+                    Baseline = Modified.Baseline;
+                    Array = Modified.Array;
+                    WhiteColumn = Modified.WhiteColumn;
+                    ColoredCountColumn = Modified.ColoredCountColumn;
+                }
             }
-        }
     }
 
     public string GetDebugString()

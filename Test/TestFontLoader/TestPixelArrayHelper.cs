@@ -71,7 +71,6 @@ public class TestPixelArrayHelper
                     MixedPixelArray2.SetPixel(x, y, (byte)(Pixel - 1));
             }
 
-
         IsMatch = PixelArrayHelper.IsMatch(MixedPixelArray, MixedPixelArray2, 0);
         Assert.IsFalse(IsMatch);
 
@@ -89,7 +88,6 @@ public class TestPixelArrayHelper
                 else
                     MixedPixelArray3.SetPixel(x, y, (byte)(Pixel - 6));
             }
-
 
         IsMatch = PixelArrayHelper.IsMatch(MixedPixelArray, MixedPixelArray3, 0);
         Assert.IsFalse(IsMatch);
@@ -175,7 +173,6 @@ public class TestPixelArrayHelper
                     MixedPixelArray2.SetPixel(x, y, (byte)(Pixel - 1));
             }
 
-
         IsMatch = PixelArrayHelper.IsLeftMatch(MixedPixelArray, MixedPixelArray2, 0, out _);
         Assert.IsFalse(IsMatch);
 
@@ -192,7 +189,6 @@ public class TestPixelArrayHelper
                     MixedPixelArray3.SetPixel(x, y, (byte)(Pixel - 6));
             }
 
-
         IsMatch = PixelArrayHelper.IsLeftMatch(MixedPixelArray, MixedPixelArray3, 0, out _);
         Assert.IsFalse(IsMatch);
 
@@ -205,7 +201,6 @@ public class TestPixelArrayHelper
 
                 LongPixelArray2.SetPixel(x, y, Pixel);
             }
-
 
         IsMatch = PixelArrayHelper.IsLeftMatch(LongPixelArray2, MixedPixelArray, 0, out _);
         Assert.IsFalse(IsMatch);
@@ -221,7 +216,6 @@ public class TestPixelArrayHelper
 
                 LongPixelArray3.SetPixel(x, y, Pixel);
             }
-
 
         for (int x = MixedPixelArray.Width; x < LongPixelArray3.Width; x++)
         {
@@ -266,7 +260,6 @@ public class TestPixelArrayHelper
                 BlackPixelArray2.SetPixel(x, y, 0x80);
             }
 
-
         IsMatch = PixelArrayHelper.IsLeftDiagonalMatch(BlackPixelArray, 0.5, 1, BlackPixelArray2, 0);
         Assert.IsFalse(IsMatch);
 
@@ -280,7 +273,6 @@ public class TestPixelArrayHelper
                 BlackPixelArray3.SetPixel(x, y, (byte)(Pixel + 1));
             }
 
-
         IsMatch = PixelArrayHelper.IsLeftDiagonalMatch(BlackPixelArray, 0.5, BlackPixelArray.Width, BlackPixelArray3, 0);
         Assert.IsFalse(IsMatch);
 
@@ -291,7 +283,6 @@ public class TestPixelArrayHelper
             {
                 BlackPixelArray4.SetPixel(x, y, 0x80);
             }
-
 
         IsMatch = PixelArrayHelper.IsLeftDiagonalMatch(BlackPixelArray, 0.5, 1, BlackPixelArray4, 0);
         Assert.IsFalse(IsMatch);
@@ -305,7 +296,6 @@ public class TestPixelArrayHelper
 
                 BlackPixelArray5.SetPixel(x, y, (byte)(Pixel + 1));
             }
-
 
         IsMatch = PixelArrayHelper.IsLeftDiagonalMatch(BlackPixelArray, 0.5, 1, BlackPixelArray5, 0);
         Assert.IsFalse(IsMatch);
@@ -328,7 +318,6 @@ public class TestPixelArrayHelper
                 LongPixelArray2.SetPixel(x, y, Pixel);
             }
 
-
         IsMatch = PixelArrayHelper.IsLeftDiagonalMatch(LongPixelArray2, 0, 0, MixedPixelArray, 0);
         Assert.IsFalse(IsMatch);
 
@@ -341,7 +330,6 @@ public class TestPixelArrayHelper
 
                 LongPixelArray3.SetPixel(x, y, Pixel);
             }
-
 
         for (int x = MixedPixelArray.Width; x < LongPixelArray3.Width; x++)
         {
@@ -401,7 +389,6 @@ public class TestPixelArrayHelper
                     MixedPixelArray2.SetPixel(x, y, (byte)(Pixel - 1));
             }
 
-
         IsMatch = PixelArrayHelper.IsRightMatch(MixedPixelArray, MixedPixelArray2, 0);
         Assert.IsFalse(IsMatch);
 
@@ -418,7 +405,6 @@ public class TestPixelArrayHelper
                     MixedPixelArray3.SetPixel(x, y, (byte)(Pixel - 6));
             }
 
-
         IsMatch = PixelArrayHelper.IsRightMatch(MixedPixelArray, MixedPixelArray3, 0);
         Assert.IsFalse(IsMatch);
 
@@ -431,7 +417,6 @@ public class TestPixelArrayHelper
 
                 LongPixelArray2.SetPixel(LongPixelArray2.Width - MixedPixelArray.Width + x, y, Pixel);
             }
-
 
         IsMatch = PixelArrayHelper.IsRightMatch(LongPixelArray2, MixedPixelArray, 0);
         Assert.IsFalse(IsMatch);
@@ -447,7 +432,6 @@ public class TestPixelArrayHelper
 
                 LongPixelArray3.SetPixel(LongPixelArray3.Width - MixedPixelArray.Width + x, y, Pixel);
             }
-
 
         for (int x = 0; x < MixedPixelArray.Width; x++)
         {

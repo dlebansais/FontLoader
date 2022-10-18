@@ -118,7 +118,6 @@ public static class PixelArrayHelper
                     return false;
             }
 
-
         return true;
     }
 
@@ -143,7 +142,6 @@ public static class PixelArrayHelper
                 if (DiffTotal > 0)
                     return false;
             }
-
 
         return true;
     }
