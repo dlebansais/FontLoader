@@ -101,7 +101,7 @@ public static class PixelArrayHelper
             return false;
 
         int DiffTotal = 0;
-        
+
         //int MaxSupportedDiff = (int)((Width * Height) * MaxSuportedDiffRatio);
         int MaxSupportedDiff = 5;
 
@@ -156,7 +156,7 @@ public static class PixelArrayHelper
         int Baseline = Math.Max(Baseline1, Baseline2);
         int Height = Baseline + Math.Max(p1.Height - Baseline1, p2.Height - Baseline2);
         int DiffTotal = 0;
-        
+
         //int MaxSupportedDiff = (int)((Width * Height) * MaxSuportedDiffRatio);
         int MaxSupportedDiff = 5;
 

@@ -21,6 +21,7 @@ environment:
     secure: MvF+AGj2M3nN6iIqDZHxHsDOr6QcqKPhf6xaLwzWpukS+UFiaRDnjum5Rui0AiyF
   opencover_version: 4.7.1221
   codecov_version: 0.2.4
+  csharp-format_version: 0.0.4
 
 matrix:
   fast_finish: true     # set this flag to immediately finish build once one of the jobs fails.
@@ -29,6 +30,8 @@ before_build:
   - ps: (Get-Content nuget.config).replace('Insert token here', $env:package_token) | Set-Content nuget.config
   - nuget restore %APPVEYOR_PROJECT_NAME%.sln
   - nuget install GitCommitId -DependencyVersion Highest -OutputDirectory packages
+  - nuget install CSharp-Format -Version %csharp-format_version% -OutputDirectory packages
+  - .\packages\CSharp-Format.%csharp-format_version%\lib\net48\CSharp-Format.exe --mode fixed-microsoft
 
 configuration:
   - Release
