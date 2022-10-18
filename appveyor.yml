@@ -21,7 +21,7 @@ environment:
     secure: MvF+AGj2M3nN6iIqDZHxHsDOr6QcqKPhf6xaLwzWpukS+UFiaRDnjum5Rui0AiyF
   opencover_version: 4.7.1221
   codecov_version: 0.2.4
-  csharp-format_version: 0.0.5
+  csharp-format_version: 0.0.7
 
 matrix:
   fast_finish: true     # set this flag to immediately finish build once one of the jobs fails.
