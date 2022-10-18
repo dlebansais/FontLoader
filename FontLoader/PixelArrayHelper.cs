@@ -235,8 +235,9 @@ public static class PixelArrayHelper
                 int x1 = Width - x - 1;
                 int y1 = y - Baseline + Baseline1;
 
-                if (x1 < p1.Width && y1 >= 0 && y1 < p1.Height && !p1.IsWhite(x1, y1))
-                    break;
+                if (x1 < p1.Width && y1 >= 0 && y1 < p1.Height)
+                    if (!p1.IsWhite(x1, y1))
+                        break;
             }
 
             for (int x2 = x; x2 < Width; x2++)
