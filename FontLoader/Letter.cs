@@ -6,22 +6,8 @@ using System.Diagnostics;
 public record Letter
 {
     public static readonly Letter EmptyNormal = new();
-
-    /*
-    public static readonly Letter EmptyItalic = new(LetterType.Italic);
-    public static readonly Letter EmptyBold = new(LetterType.Bold);
-    */
-
     public static readonly Letter Unknown = new("█");
     public static readonly Letter Whitespace = new(" ");
-    public static readonly Letter Ignore1 = new("█");
-    public static readonly Letter Combo1 = new('!', '”', LetterType.Italic);
-    public static readonly Letter Combo2 = new('t', 'h', LetterType.Normal);
-    public static readonly Letter Combo3 = new('s', 't', LetterType.Normal);
-    public static readonly Letter Combo4 = new('n', 'd', LetterType.Normal);
-    public static readonly Letter SpecialJ = new(' ', 'j', LetterType.Normal);
-    public static readonly Letter SpecialJItalic = new(' ', 'j', LetterType.Italic);
-    public static readonly Letter SubscriptReserved = new(' ', '®', LetterType.Normal);
 
     private Letter()
         : this(string.Empty, LetterType.Normal)

@@ -3,6 +3,7 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Windows.Media.Media3D;
 
 public static class PixelArrayHelper
 {
@@ -594,6 +595,86 @@ public static class PixelArrayHelper
                     Distance = TotalWhite;
             }
         }
+
+        return Distance;
+    }
+
+    public static double MaxMinDistance(PixelArray p1, PixelArray p2)
+    {
+        int MinY = Math.Min(-p1.Baseline, -p2.Baseline);
+        int MaxY = Math.Max(p1.Height - p1.Baseline, p2.Height - p2.Baseline);
+        int MinLeft = int.MaxValue;
+        int MinRight = int.MaxValue;
+
+        for (int y = MinY; y < MaxY; y++)
+        {
+            int y1 = y + p1.Baseline;
+
+            if (y1 >= 0 && y1 < p1.Height)
+            {
+                int Left = 0;
+                while (Left < p1.Width && p1.IsWhite(p1.Width - 1 - Left, y1))
+                    Left++;
+
+                if (MinLeft > Left)
+                    MinLeft = Left;
+            }
+        }
+
+        double LeftScore = 0;
+        int LeftScoreCount = 0;
+
+        for (int y = MinY; y < MaxY; y++)
+        {
+            int y1 = y + p1.Baseline;
+
+            if (y1 >= 0 && y1 < p1.Height)
+            {
+                if (MinLeft < p1.Width)
+                {
+                    LeftScore += p1.GetPixel(p1.Width - 1 - MinLeft, y1) / 0xFF;
+                    LeftScoreCount++;
+                }
+            }
+        }
+
+        LeftScore = LeftScoreCount > 0 ? LeftScore / LeftScoreCount : 0;
+
+        for (int y = MinY; y < MaxY; y++)
+        {
+            int y2 = y + p2.Baseline;
+
+            if (y2 >= 0 && y2 < p2.Height)
+            {
+                int Right = 0;
+                while (Right < p2.Width && p2.IsWhite(Right, y2))
+                    Right++;
+
+                if (MinRight > Right)
+                    MinRight = Right;
+            }
+        }
+
+        double RightScore = 0;
+        int RightScoreCount = 0;
+
+        for (int y = MinY; y < MaxY; y++)
+        {
+            int y2 = y + p2.Baseline;
+
+            if (y2 >= 0 && y2 < p2.Height)
+            {
+                if (MinRight < p2.Width)
+                {
+                    RightScore += p2.GetPixel(MinRight, y2) / 0xFF;
+                    RightScoreCount++;
+                }
+            }
+        }
+
+        RightScore = RightScoreCount > 0 ? RightScore / RightScoreCount : 0;
+
+        double Distance = MinLeft + MinRight + LeftScore + RightScore;
 
         return Distance;
     }

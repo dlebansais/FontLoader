@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
-using System.Windows.Media.Media3D;
 
 [DebuggerDisplay("{_Width} x {Height}, {Baseline}")]
 public class PixelArray
