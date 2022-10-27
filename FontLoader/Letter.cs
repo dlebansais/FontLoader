@@ -24,11 +24,6 @@ public record Letter
     {
     }
 
-    private Letter(char character1, char character2, LetterType letterType)
-        : this($"{character1}{character2}", letterType)
-    {
-    }
-
     public Letter(Letter template, LetterType letterType)
         : this(template.Text, letterType)
     {
