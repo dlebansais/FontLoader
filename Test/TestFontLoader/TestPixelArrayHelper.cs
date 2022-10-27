@@ -654,6 +654,8 @@ public class TestPixelArrayHelper
         Assert.Less(0, Distance);
         Distance = PixelArrayHelper.Distance(BigPixelArray, MixedPixelArray);
         Assert.Less(0, Distance);
+        Distance = PixelArrayHelper.Distance(MixedPixelArray, BigPixelArray);
+        Assert.Less(0, Distance);
     }
 
     [Test]

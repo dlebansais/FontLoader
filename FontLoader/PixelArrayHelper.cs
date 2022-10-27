@@ -578,22 +578,23 @@ public static class PixelArrayHelper
             int y1 = y + p1.Baseline;
             int y2 = y + p2.Baseline;
 
-            if (y1 >= 0 && y1 < p1.Height && y2 >= 0 && y2 < p2.Height)
-            {
-                int Left = 0;
-                int Right = 0;
+            if (y1 >= 0 && y1 < p1.Height)
+                if (y2 >= 0 && y2 < p2.Height)
+                {
+                    int Left = 0;
+                    int Right = 0;
 
-                while (Left < p1.Width && p1.IsWhite(p1.Width - 1 - Left, y1))
-                    Left++;
+                    while (Left < p1.Width && p1.IsWhite(p1.Width - 1 - Left, y1))
+                        Left++;
 
-                while (Right < p2.Width && p2.IsWhite(Right, y2))
-                    Right++;
+                    while (Right < p2.Width && p2.IsWhite(Right, y2))
+                        Right++;
 
-                int TotalWhite = Left + Right;
+                    int TotalWhite = Left + Right;
 
-                if (Distance > TotalWhite)
-                    Distance = TotalWhite;
-            }
+                    if (Distance > TotalWhite)
+                        Distance = TotalWhite;
+                }
         }
 
         return Distance;
