@@ -1,6 +1,7 @@
 ﻿namespace FontLoader;
 
 using System.Diagnostics;
+using System.Text.Json.Serialization;
 
 [DebuggerDisplay("{DisplayText,nq}")]
 public record Letter
@@ -37,7 +38,7 @@ public record Letter
         IsSingleGlyph = LetterHelper.IsSingleGlyph(text);
     }
 
-    [System.Text.Json.Serialization.JsonConstructor]
+    [JsonConstructor]
     public Letter(string text, LetterType letterType, bool isWhitespace, bool isSingleGlyph)
     {
         Text = text;

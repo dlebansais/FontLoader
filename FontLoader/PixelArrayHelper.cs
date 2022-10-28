@@ -1,9 +1,7 @@
 ﻿namespace FontLoader;
 
 using System;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Windows.Media.Media3D;
 
 public static class PixelArrayHelper
 {

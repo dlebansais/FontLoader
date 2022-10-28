@@ -10,7 +10,6 @@ using System.Runtime.InteropServices;
 public class PixelArray
 {
     public static readonly PixelArray Empty = new();
-    public const double MaxSuportedDiffRatio = 0.2;
 
     private PixelArray()
     {
