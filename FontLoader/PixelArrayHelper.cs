@@ -565,45 +565,19 @@ public static class PixelArrayHelper
         return Result;
     }
 
-    public static int Distance(PixelArray p1, PixelArray p2)
+    public static double Distance(PixelArray p1, PixelArray p2, int separation)
     {
         int MinY = Math.Min(-p1.Baseline, -p2.Baseline);
         int MaxY = Math.Max(p1.Height - p1.Baseline, p2.Height - p2.Baseline);
-        int Distance = int.MaxValue;
+        int ComparisonHeight = MaxY - MinY;
+        int[] LeftPosition = new int[ComparisonHeight];
+        int[] RightPosition = new int[ComparisonHeight];
 
-        for (int y = MinY; y < MaxY; y++)
+        for (int y = 0; y < ComparisonHeight; y++)
         {
-            int y1 = y + p1.Baseline;
-            int y2 = y + p2.Baseline;
-
-            if (y1 >= 0 && y1 < p1.Height)
-                if (y2 >= 0 && y2 < p2.Height)
-                {
-                    int Left = 0;
-                    int Right = 0;
-
-                    while (Left < p1.Width && p1.IsWhite(p1.Width - 1 - Left, y1))
-                        Left++;
-
-                    while (Right < p2.Width && p2.IsWhite(Right, y2))
-                        Right++;
-
-                    int TotalWhite = Left + Right;
-
-                    if (Distance > TotalWhite)
-                        Distance = TotalWhite;
-                }
+            LeftPosition[y] = 0;
+            RightPosition[y] = p1.Width + p2.Width - 1;
         }
-
-        return Distance;
-    }
-
-    public static double MaxMinDistance(PixelArray p1, PixelArray p2)
-    {
-        int MinY = Math.Min(-p1.Baseline, -p2.Baseline);
-        int MaxY = Math.Max(p1.Height - p1.Baseline, p2.Height - p2.Baseline);
-        int MinLeft = int.MaxValue;
-        int MinRight = int.MaxValue;
 
         for (int y = MinY; y < MaxY; y++)
         {
@@ -615,32 +589,9 @@ public static class PixelArrayHelper
                 while (Left < p1.Width && p1.IsWhite(p1.Width - 1 - Left, y1))
                     Left++;
 
-                if (MinLeft > Left)
-                    MinLeft = Left;
+                LeftPosition[y - MinY] = p1.Width - Left;
             }
-        }
 
-        double LeftScore = 0;
-        int LeftScoreCount = 0;
-
-        for (int y = MinY; y < MaxY; y++)
-        {
-            int y1 = y + p1.Baseline;
-
-            if (y1 >= 0 && y1 < p1.Height)
-            {
-                if (MinLeft < p1.Width)
-                {
-                    LeftScore += p1.GetPixel(p1.Width - 1 - MinLeft, y1) / 0xFF;
-                    LeftScoreCount++;
-                }
-            }
-        }
-
-        LeftScore = LeftScoreCount > 0 ? LeftScore / LeftScoreCount : 0;
-
-        for (int y = MinY; y < MaxY; y++)
-        {
             int y2 = y + p2.Baseline;
 
             if (y2 >= 0 && y2 < p2.Height)
@@ -649,32 +600,30 @@ public static class PixelArrayHelper
                 while (Right < p2.Width && p2.IsWhite(Right, y2))
                     Right++;
 
-                if (MinRight > Right)
-                    MinRight = Right;
+                RightPosition[y - MinY] = p1.Width + Right;
             }
         }
 
-        double RightScore = 0;
-        int RightScoreCount = 0;
+        double[,] SquareDistances = new double[ComparisonHeight, ComparisonHeight];
 
-        for (int y = MinY; y < MaxY; y++)
-        {
-            int y2 = y + p2.Baseline;
-
-            if (y2 >= 0 && y2 < p2.Height)
+        for (int i = 0; i < ComparisonHeight; i++)
+            for (int j = 0; j < ComparisonHeight; j++)
             {
-                if (MinRight < p2.Width)
-                {
-                    RightScore += p2.GetPixel(MinRight, y2) / 0xFF;
-                    RightScoreCount++;
-                }
+                double X1 = LeftPosition[i];
+                double Y1 = i;
+                double X2 = RightPosition[j];
+                double Y2 = j;
+
+                SquareDistances[i, j] = (X2 - X1) * (X2 - X1) + (Y2 - Y1) * (Y2 - Y1);
             }
-        }
 
-        RightScore = RightScoreCount > 0 ? RightScore / RightScoreCount : 0;
+        double MinSquareDistance = double.PositiveInfinity;
 
-        double Distance = MinLeft + MinRight + LeftScore + RightScore;
+        for (int i = 0; i < ComparisonHeight; i++)
+            for (int j = 0; j < ComparisonHeight; j++)
+                if (MinSquareDistance > SquareDistances[i, j])
+                    MinSquareDistance = SquareDistances[i, j];
 
-        return Distance;
+        return Math.Sqrt(MinSquareDistance);
     }
 }

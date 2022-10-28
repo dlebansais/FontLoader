@@ -644,42 +644,17 @@ public class TestPixelArrayHelper
         Stream BigBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestPixelArray).Namespace}.Big.png");
         Bitmap BigBitmap = new Bitmap(BigBitmapStream);
         PixelArray BigPixelArray = PixelArray.FromBitmap(BigBitmap);
-        int Distance;
-
-        Distance = PixelArrayHelper.Distance(BlackPixelArray, MixedPixelArray);
-        Assert.Less(0, Distance);
-        Distance = PixelArrayHelper.Distance(BlackPixelArray, BlackPixelArray);
-        Assert.AreEqual(0, Distance);
-        Distance = PixelArrayHelper.Distance(MixedPixelArray, MixedPixelArray);
-        Assert.Less(0, Distance);
-        Distance = PixelArrayHelper.Distance(BigPixelArray, MixedPixelArray);
-        Assert.Less(0, Distance);
-        Distance = PixelArrayHelper.Distance(MixedPixelArray, BigPixelArray);
-        Assert.Less(0, Distance);
-    }
-
-    [Test]
-    public void MaxMinDistanceTest()
-    {
-        Assembly TestAssembly = Assembly.GetExecutingAssembly();
-        Stream BlackBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestPixelArray).Namespace}.Black.png");
-        Bitmap BlackBitmap = new Bitmap(BlackBitmapStream);
-        PixelArray BlackPixelArray = PixelArray.FromBitmap(BlackBitmap);
-        Stream MixedBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestPixelArray).Namespace}.Mixed.png");
-        Bitmap MixedBitmap = new Bitmap(MixedBitmapStream);
-        PixelArray MixedPixelArray = PixelArray.FromBitmap(MixedBitmap);
-        Stream BigBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestPixelArray).Namespace}.Big.png");
-        Bitmap BigBitmap = new Bitmap(BigBitmapStream);
-        PixelArray BigPixelArray = PixelArray.FromBitmap(BigBitmap);
         double Distance;
 
-        Distance = PixelArrayHelper.MaxMinDistance(BlackPixelArray, MixedPixelArray);
+        Distance = PixelArrayHelper.Distance(BlackPixelArray, MixedPixelArray, 0);
         Assert.Less(0, Distance);
-        Distance = PixelArrayHelper.MaxMinDistance(BlackPixelArray, BlackPixelArray);
+        Distance = PixelArrayHelper.Distance(BlackPixelArray, BlackPixelArray, 0);
         Assert.AreEqual(0, Distance);
-        Distance = PixelArrayHelper.MaxMinDistance(MixedPixelArray, MixedPixelArray);
+        Distance = PixelArrayHelper.Distance(MixedPixelArray, MixedPixelArray, 0);
         Assert.Less(0, Distance);
-        Distance = PixelArrayHelper.MaxMinDistance(BigPixelArray, MixedPixelArray);
+        Distance = PixelArrayHelper.Distance(BigPixelArray, MixedPixelArray, 0);
+        Assert.Less(0, Distance);
+        Distance = PixelArrayHelper.Distance(MixedPixelArray, BigPixelArray, 0);
         Assert.Less(0, Distance);
     }
 
