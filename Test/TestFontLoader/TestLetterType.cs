@@ -9,22 +9,22 @@ public class TestLetterType
     [Test]
     public void TypeTest()
     {
-        Assert.IsTrue(LetterType.IsSameType(LetterType.Normal, LetterType.Normal));
-        Assert.IsTrue(LetterType.IsSameType(LetterType.Italic, LetterType.Italic));
-        Assert.IsTrue(LetterType.IsSameType(LetterType.Bold, LetterType.Bold));
-        Assert.IsTrue(LetterType.IsSameType(LetterType.ItalicBold, LetterType.ItalicBold));
-        Assert.IsFalse(LetterType.IsSameType(LetterType.Normal, LetterType.Italic));
-        Assert.IsFalse(LetterType.IsSameType(LetterType.Normal, LetterType.Bold));
-        Assert.IsFalse(LetterType.IsSameType(LetterType.Normal, LetterType.ItalicBold));
-        Assert.IsFalse(LetterType.IsSameType(LetterType.Italic, LetterType.Normal));
-        Assert.IsFalse(LetterType.IsSameType(LetterType.Italic, LetterType.Bold));
-        Assert.IsFalse(LetterType.IsSameType(LetterType.Italic, LetterType.ItalicBold));
-        Assert.IsFalse(LetterType.IsSameType(LetterType.Bold, LetterType.Italic));
-        Assert.IsFalse(LetterType.IsSameType(LetterType.Bold, LetterType.Normal));
-        Assert.IsFalse(LetterType.IsSameType(LetterType.Bold, LetterType.ItalicBold));
-        Assert.IsFalse(LetterType.IsSameType(LetterType.ItalicBold, LetterType.Italic));
-        Assert.IsFalse(LetterType.IsSameType(LetterType.ItalicBold, LetterType.Bold));
-        Assert.IsFalse(LetterType.IsSameType(LetterType.ItalicBold, LetterType.Normal));
+        Assert.IsTrue(LetterType.IsSameTypeItalicOrBold(LetterType.Normal, LetterType.Normal));
+        Assert.IsTrue(LetterType.IsSameTypeItalicOrBold(LetterType.Italic, LetterType.Italic));
+        Assert.IsTrue(LetterType.IsSameTypeItalicOrBold(LetterType.Bold, LetterType.Bold));
+        Assert.IsTrue(LetterType.IsSameTypeItalicOrBold(LetterType.ItalicBold, LetterType.ItalicBold));
+        Assert.IsFalse(LetterType.IsSameTypeItalicOrBold(LetterType.Normal, LetterType.Italic));
+        Assert.IsFalse(LetterType.IsSameTypeItalicOrBold(LetterType.Normal, LetterType.Bold));
+        Assert.IsFalse(LetterType.IsSameTypeItalicOrBold(LetterType.Normal, LetterType.ItalicBold));
+        Assert.IsFalse(LetterType.IsSameTypeItalicOrBold(LetterType.Italic, LetterType.Normal));
+        Assert.IsFalse(LetterType.IsSameTypeItalicOrBold(LetterType.Italic, LetterType.Bold));
+        Assert.IsFalse(LetterType.IsSameTypeItalicOrBold(LetterType.Italic, LetterType.ItalicBold));
+        Assert.IsFalse(LetterType.IsSameTypeItalicOrBold(LetterType.Bold, LetterType.Italic));
+        Assert.IsFalse(LetterType.IsSameTypeItalicOrBold(LetterType.Bold, LetterType.Normal));
+        Assert.IsFalse(LetterType.IsSameTypeItalicOrBold(LetterType.Bold, LetterType.ItalicBold));
+        Assert.IsFalse(LetterType.IsSameTypeItalicOrBold(LetterType.ItalicBold, LetterType.Italic));
+        Assert.IsFalse(LetterType.IsSameTypeItalicOrBold(LetterType.ItalicBold, LetterType.Bold));
+        Assert.IsFalse(LetterType.IsSameTypeItalicOrBold(LetterType.ItalicBold, LetterType.Normal));
     }
 
     [Test]

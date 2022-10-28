@@ -82,9 +82,9 @@ public class Font
         string[] ResourceNames = fontAssembly.GetManifestResourceNames();
 
         foreach (string ResourceName in ResourceNames)
-            if (TryParseFontResource(ResourceName, out double FontSize, out bool IsBlue, out bool IsItalic, out bool IsBold))
+            if (TryParseFontResource(ResourceName, out double FontSize, out TypeFlags TypeFlags))
             {
-                LetterType FontLetterType = new(FontSize, IsBlue, IsItalic, IsBold);
+                LetterType FontLetterType = new(FontSize, TypeFlags);
                 FontBitmapStream FontBitmapStream = new(fontAssembly, ResourceName, FontSize);
 
                 StreamTable.Add(FontLetterType, FontBitmapStream);
@@ -93,12 +93,10 @@ public class Font
         return new FontBitmapCollection(StreamTable);
     }
 
-    private bool TryParseFontResource(string resourceName, out double fontSize, out bool isBlue, out bool isItalic, out bool isBold)
+    private bool TryParseFontResource(string resourceName, out double fontSize, out TypeFlags typeFlags)
     {
         fontSize = 0;
-        isBlue = false;
-        isItalic = false;
-        isBold = false;
+        typeFlags = TypeFlags.Normal;
 
         string[] Splitted = resourceName.Split('.');
 
@@ -126,34 +124,28 @@ public class Font
 
         if (FontColorString == "blue")
         {
-            isBlue = true;
+            typeFlags |= TypeFlags.Blue;
         }
         else if (FontColorString == "black")
         {
-            isBlue = false;
         }
         else
             return false;
 
         if (LetterTypeString == "normal")
         {
-            isItalic = false;
-            isBold = false;
         }
         else if (LetterTypeString == "italic")
         {
-            isItalic = true;
-            isBold = false;
+            typeFlags |= TypeFlags.Italic;
         }
         else if (LetterTypeString == "bold")
         {
-            isItalic = false;
-            isBold = true;
+            typeFlags |= TypeFlags.Bold;
         }
         else if (LetterTypeString == "italic+bold")
         {
-            isItalic = true;
-            isBold = true;
+            typeFlags |= TypeFlags.Italic | TypeFlags.Bold;
         }
         else
             return false;
@@ -192,7 +184,7 @@ public class Font
     private void AddLetter(FontBitmapCollection bitmap, int column, int row, Dictionary<Letter, PixelArray> characterTable, Letter letter)
     {
         foreach (LetterType Key in bitmap.SupportedLetterTypes)
-            if (LetterType.IsSameType(Key, letter.LetterType))
+            if (LetterType.IsSameTypeItalicOrBold(Key, letter.LetterType))
             {
                 PixelArray CellArray = bitmap.GetPixelArray(column, row, Key, isClipped: true);
 
