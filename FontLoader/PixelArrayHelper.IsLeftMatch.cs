@@ -48,28 +48,37 @@ public static partial class PixelArrayHelper
     {
         int y1 = y - baseline + baseline1;
         int y2 = y - baseline + baseline2;
+        bool IsComparable = y1 >= 0 && y1 < p1.Height && y2 >= 0 && y2 < p2.Height;
 
-        if (y1 >= 0 && y2 >= 0 && y1 < p1.Height && y2 < p2.Height)
-        {
-            if (!IsLeftMatchPixed(p1, p2, x, y1, y2, ref diffTotal))
-                return false;
-
-            if (diffTotal > maxSupportedDiff)
-                return false;
-
-            if (diffTotal > 0 && firstDiffX < 0)
-                firstDiffX = x;
-        }
+        if (IsComparable)
+            return IsLeftMatchPixelComparable(p1, p2, x, y1, y2, maxSupportedDiff, ref diffTotal, ref firstDiffX);
         else
-        {
-            if (y1 >= 0 && y1 < p1.Height)
-                if (!p1.IsWhite(x, y1))
-                    return false;
+            return IsLeftMatchPixelNotComparable(p1, p2, x, y1, y2);
+    }
 
-            if (y2 >= 0 && y2 < p2.Height)
-                if (!p2.IsWhite(x, y2))
-                    return false;
-        }
+    private static bool IsLeftMatchPixelComparable(PixelArray p1, PixelArray p2, int x, int y1, int y2, int maxSupportedDiff, ref int diffTotal, ref int firstDiffX)
+    {
+        if (!IsLeftMatchPixed(p1, p2, x, y1, y2, ref diffTotal))
+            return false;
+
+        if (diffTotal > maxSupportedDiff)
+            return false;
+
+        if (diffTotal > 0 && firstDiffX < 0)
+            firstDiffX = x;
+
+        return true;
+    }
+
+    private static bool IsLeftMatchPixelNotComparable(PixelArray p1, PixelArray p2, int x, int y1, int y2)
+    {
+        if (y1 >= 0 && y1 < p1.Height)
+            if (!p1.IsWhite(x, y1))
+                return false;
+
+        if (y2 >= 0 && y2 < p2.Height)
+            if (!p2.IsWhite(x, y2))
+                return false;
 
         return true;
     }

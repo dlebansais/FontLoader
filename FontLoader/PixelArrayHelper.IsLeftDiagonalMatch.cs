@@ -83,28 +83,40 @@ public static partial class PixelArrayHelper
     {
         int y1 = y - baseline + baseline1;
         int y2 = y - baseline + baseline2;
+        bool IsComparable = y1 >= 0 && y1 < p1.Height && y2 >= 0 && y2 < p2.Height;
+
+        if (IsComparable)
+            return IsLeftDiagonalMatchPixelComparableDifferent(p1, p2, x, y, y1, y2, maxSupportedDiff, pixelSoftTaken, ref diffTotal);
+        else
+            return IsLeftDiagonalMatchPixelNotComparableDifferent(p1, p2, x, y, y1, y2, pixelSoftTaken);
+    }
+
+    private static bool IsLeftDiagonalMatchPixelComparableDifferent(PixelArray p1, PixelArray p2, int x, int y, int y1, int y2, int maxSupportedDiff, bool[,] pixelSoftTaken, ref int diffTotal)
+    {
         bool IsDifferent = false;
 
-        if (y1 >= 0 && y2 >= 0 && y1 < p1.Height && y2 < p2.Height)
+        if (pixelSoftTaken[x, y])
         {
-            if (pixelSoftTaken[x, y])
-            {
-                if (!IsLeftMatchPixed(p1, p2, x, y1, y2, ref diffTotal))
-                    IsDifferent = true;
-                else if (diffTotal > maxSupportedDiff)
-                    IsDifferent = true;
-            }
+            if (!IsLeftMatchPixed(p1, p2, x, y1, y2, ref diffTotal))
+                IsDifferent = true;
+            else if (diffTotal > maxSupportedDiff)
+                IsDifferent = true;
         }
-        else
-        {
-            if (y1 >= 0 && y1 < p1.Height)
-                if (!p1.IsWhite(x, y1))
-                    IsDifferent = true;
 
-            if (y2 >= 0 && y2 < p2.Height)
-                if (pixelSoftTaken[x, y] && !p2.IsWhite(x, y2))
-                    IsDifferent = true;
-        }
+        return IsDifferent;
+    }
+
+    private static bool IsLeftDiagonalMatchPixelNotComparableDifferent(PixelArray p1, PixelArray p2, int x, int y, int y1, int y2, bool[,] pixelSoftTaken)
+    {
+        bool IsDifferent = false;
+
+        if (y1 >= 0 && y1 < p1.Height)
+            if (!p1.IsWhite(x, y1))
+                IsDifferent = true;
+
+        if (y2 >= 0 && y2 < p2.Height)
+            if (pixelSoftTaken[x, y] && !p2.IsWhite(x, y2))
+                IsDifferent = true;
 
         return IsDifferent;
     }
