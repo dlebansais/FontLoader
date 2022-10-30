@@ -567,11 +567,15 @@ public static class PixelArrayHelper
 
     public static double Distance(PixelArray p1, PixelArray p2, int separation)
     {
+        Debug.Assert(separation >= 0);
+
         int MinY = Math.Min(-p1.Baseline, -p2.Baseline);
-        int MaxY = Math.Max(p1.Height - p1.Baseline, p2.Height - p2.Baseline);
+        int MaxY = 0;
         int ComparisonHeight = MaxY - MinY;
         int[] LeftPosition = new int[ComparisonHeight];
+        byte[] LeftIntensity = new byte[ComparisonHeight];
         int[] RightPosition = new int[ComparisonHeight];
+        byte[] RightIntensity = new byte[ComparisonHeight];
 
         for (int y = 0; y < ComparisonHeight; y++)
         {
@@ -590,6 +594,7 @@ public static class PixelArrayHelper
                     Left++;
 
                 LeftPosition[y - MinY] = p1.Width - Left;
+                LeftIntensity[y - MinY] = Left < p1.Width ? p1.GetPixel(p1.Width - 1 - Left, y1) : (byte)0xFF;
             }
 
             int y2 = y + p2.Baseline;
@@ -601,6 +606,7 @@ public static class PixelArrayHelper
                     Right++;
 
                 RightPosition[y - MinY] = p1.Width + Right;
+                RightIntensity[y - MinY] = Right < p2.Width ? p2.GetPixel(Right, y2) : (byte)0xFF;
             }
         }
 
@@ -609,9 +615,9 @@ public static class PixelArrayHelper
         for (int i = 0; i < ComparisonHeight; i++)
             for (int j = 0; j < ComparisonHeight; j++)
             {
-                double X1 = LeftPosition[i];
+                double X1 = LeftPosition[i] - ((double)LeftIntensity[i] / 0xFF);
                 double Y1 = i;
-                double X2 = RightPosition[j];
+                double X2 = separation + RightPosition[j] + ((double)RightIntensity[i] / 0xFF);
                 double Y2 = j;
 
                 SquareDistances[i, j] = (X2 - X1) * (X2 - X1) + (Y2 - Y1) * (Y2 - Y1);
