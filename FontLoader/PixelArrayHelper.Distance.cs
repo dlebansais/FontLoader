@@ -15,6 +15,7 @@ public static partial class PixelArrayHelper
 
         InitializePositionAndIntensity(p1, p2, ComparisonHeight, out HorizontalDistance[] LeftDistances, out HorizontalDistance[] RightDistances);
         MeasureDistances(p1, p2, ComparisonHeight, MinY, LeftDistances, RightDistances);
+
         double Result = MeasureDistanceMin(p1, p2, ComparisonHeight, LeftDistances, RightDistances, separation);
 
         return Result;
@@ -46,6 +47,7 @@ public static partial class PixelArrayHelper
                     Left++;
 
                 byte Intensity = Left < p1.Width ? p1.GetPixel(p1.Width - 1 - Left, y1) : (byte)0xFF;
+
                 leftDistances[y] = leftDistances[y] with { ColoredPixelPosition = Left, ColoredPixelIntensity = Intensity };
             }
 
@@ -59,6 +61,7 @@ public static partial class PixelArrayHelper
                     Right++;
 
                 byte Intensity = Right < p2.Width ? p2.GetPixel(Right, y2) : (byte)0xFF;
+
                 rightDistances[y] = rightDistances[y] with { ColoredPixelPosition = Right, ColoredPixelIntensity = Intensity };
             }
         }

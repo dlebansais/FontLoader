@@ -63,7 +63,6 @@ public static partial class PixelArrayHelper
         }
 
         Debug.Assert(p1.GetColoredCountColumn(p1.Width - x - 1) == p2.GetColoredCountColumn(p2.Width - x - 1));
-
         return true;
     }
 }

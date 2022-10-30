@@ -94,7 +94,6 @@ public static partial class PixelArrayHelper
             }
 
         Debug.Assert(p.IsWhiteColumn(x));
-
         return true;
     }
 
