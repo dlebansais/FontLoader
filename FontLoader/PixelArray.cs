@@ -218,13 +218,23 @@ public class PixelArray
 
     public void GetClipZone(out int leftEdge, out int topEdge, out int rightEdge, out int bottomEdge)
     {
-        for (leftEdge = 0; leftEdge < _Width; leftEdge++)
+        leftEdge = GetLeftEdge();
+        topEdge = GetTopEdge();
+        rightEdge = GetRightEdge();
+        bottomEdge = GetBottomEdge();
+    }
+
+    private int GetLeftEdge()
+    {
+        int LeftEdge;
+
+        for (LeftEdge = 0; LeftEdge < _Width; LeftEdge++)
         {
             bool IsEmptyColumn = true;
 
             for (int y = 0; y < Height; y++)
             {
-                if (!IsWhite(leftEdge, y))
+                if (!IsWhite(LeftEdge, y))
                 {
                     IsEmptyColumn = false;
                     break;
@@ -235,13 +245,44 @@ public class PixelArray
                 break;
         }
 
-        for (rightEdge = _Width; rightEdge > 0; rightEdge--)
+        return LeftEdge;
+    }
+
+    private int GetTopEdge()
+    {
+        int TopEdge;
+
+        for (TopEdge = 0; TopEdge < Height; TopEdge++)
+        {
+            bool IsEmptyLine = true;
+
+            for (int x = 0; x < _Width; x++)
+            {
+                if (!IsWhite(x, TopEdge))
+                {
+                    IsEmptyLine = false;
+                    break;
+                }
+            }
+
+            if (!IsEmptyLine)
+                break;
+        }
+
+        return TopEdge;
+    }
+
+    private int GetRightEdge()
+    {
+        int RightEdge;
+
+        for (RightEdge = _Width; RightEdge > 0; RightEdge--)
         {
             bool IsEmptyColumn = true;
 
             for (int y = 0; y < Height; y++)
             {
-                if (!IsWhite(rightEdge - 1, y))
+                if (!IsWhite(RightEdge - 1, y))
                 {
                     IsEmptyColumn = false;
                     break;
@@ -252,13 +293,20 @@ public class PixelArray
                 break;
         }
 
-        for (topEdge = 0; topEdge < Height; topEdge++)
+        return RightEdge;
+    }
+
+    private int GetBottomEdge()
+    {
+        int BottomEdge;
+
+        for (BottomEdge = Height; BottomEdge > 0; BottomEdge--)
         {
             bool IsEmptyLine = true;
 
             for (int x = 0; x < _Width; x++)
             {
-                if (!IsWhite(x, topEdge))
+                if (!IsWhite(x, BottomEdge - 1))
                 {
                     IsEmptyLine = false;
                     break;
@@ -269,22 +317,7 @@ public class PixelArray
                 break;
         }
 
-        for (bottomEdge = Height; bottomEdge > 0; bottomEdge--)
-        {
-            bool IsEmptyLine = true;
-
-            for (int x = 0; x < _Width; x++)
-            {
-                if (!IsWhite(x, bottomEdge - 1))
-                {
-                    IsEmptyLine = false;
-                    break;
-                }
-            }
-
-            if (!IsEmptyLine)
-                break;
-        }
+        return BottomEdge;
     }
 
     public PixelArray Clipped(int leftEdge, int topEdge, int rightEdge, int bottomEdge)

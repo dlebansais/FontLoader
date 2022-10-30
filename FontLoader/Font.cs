@@ -111,46 +111,56 @@ public class Font
         string LetterTypeString = Splitted[Splitted.Length - 2];
         string Extension = Splitted[Splitted.Length - 1];
 
-        while (FontSizeString.StartsWith("_") || FontSizeString.StartsWith("0"))
-            FontSizeString = FontSizeString.Substring(1);
+        if (!TryParseFontSizeColorAndType(FontSizeString, FontColorString, LetterTypeString, out fontSize, out typeFlags))
+            return false;
 
-        FontSizeString = FontSizeString.Replace("x", ".");
+        if (Extension != "png")
+            return false;
 
-        if (!double.TryParse(FontSizeString, NumberStyles.Float, CultureInfo.InvariantCulture, out fontSize))
+        return true;
+    }
+
+    private bool TryParseFontSizeColorAndType(string fontSizeString, string fontColorString, string letterTypeString, out double fontSize, out TypeFlags typeFlags)
+    {
+        typeFlags = TypeFlags.Normal;
+
+        while (fontSizeString.StartsWith("_") || fontSizeString.StartsWith("0"))
+            fontSizeString = fontSizeString.Substring(1);
+
+        fontSizeString = fontSizeString.Replace("x", ".");
+
+        if (!double.TryParse(fontSizeString, NumberStyles.Float, CultureInfo.InvariantCulture, out fontSize))
             return false;
 
         if (fontSize < LetterType.MinFontSize)
             return false;
 
-        if (FontColorString == "blue")
+        if (fontColorString == "blue")
         {
             typeFlags |= TypeFlags.Blue;
         }
-        else if (FontColorString == "black")
+        else if (fontColorString == "black")
         {
         }
         else
             return false;
 
-        if (LetterTypeString == "normal")
+        if (letterTypeString == "normal")
         {
         }
-        else if (LetterTypeString == "italic")
+        else if (letterTypeString == "italic")
         {
             typeFlags |= TypeFlags.Italic;
         }
-        else if (LetterTypeString == "bold")
+        else if (letterTypeString == "bold")
         {
             typeFlags |= TypeFlags.Bold;
         }
-        else if (LetterTypeString == "italic+bold")
+        else if (letterTypeString == "italic+bold")
         {
             typeFlags |= TypeFlags.Italic | TypeFlags.Bold;
         }
         else
-            return false;
-
-        if (Extension != "png")
             return false;
 
         return true;

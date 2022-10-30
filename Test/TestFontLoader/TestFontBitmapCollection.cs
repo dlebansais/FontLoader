@@ -84,7 +84,6 @@ public class TestFontBitmapCollection
         });
     }
 
-
     private FontBitmapStream CreateTestStream()
     {
         var FontAssembly = typeof(Dummy).Assembly;

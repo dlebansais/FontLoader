@@ -68,7 +68,6 @@ public class TestFontBitmap
         }
     }
 
-
     [Test]
     public void GetBitmapBytesTest()
     {
