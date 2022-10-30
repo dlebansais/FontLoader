@@ -180,7 +180,6 @@ public class Font
         return CharacterTable;
     }
 
-
     private void AddLetter(FontBitmapCollection bitmap, int column, int row, Dictionary<Letter, PixelArray> characterTable, Letter letter)
     {
         foreach (LetterType Key in bitmap.SupportedLetterTypes)

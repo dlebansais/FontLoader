@@ -2,6 +2,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Windows.Media.Media3D;
 
 public static class PixelArrayHelper
 {
@@ -165,46 +166,62 @@ public static class PixelArrayHelper
         {
             if (x < p1.Width && x < p2.Width)
             {
-                for (int y = 0; y < Height; y++)
-                {
-                    int y1 = y - Baseline + Baseline1;
-                    int y2 = y - Baseline + Baseline2;
-
-                    if (y1 >= 0 && y2 >= 0 && y1 < p1.Height && y2 < p2.Height)
-                    {
-                        if (!IsLeftMatchPixed(p1, p2, x, y1, y2, ref DiffTotal))
-                            return false;
-
-                        if (DiffTotal > MaxSupportedDiff)
-                            return false;
-
-                        if (DiffTotal > 0 && firstDiffX < 0)
-                            firstDiffX = x;
-                    }
-                    else
-                    {
-                        if (y1 >= 0 && y1 < p1.Height)
-                            if (!p1.IsWhite(x, y1))
-                                return false;
-
-                        if (y2 >= 0 && y2 < p2.Height)
-                            if (!p2.IsWhite(x, y2))
-                                return false;
-                    }
-                }
+                if (!IsLeftMatchColumn(p1, p2, x, Baseline, Baseline1, Baseline2, Height, MaxSupportedDiff, ref DiffTotal, ref firstDiffX))
+                    return false;
             }
             else if (x < p1.Width)
             {
-                for (int y = 0; y < p1.Height; y++)
-                    if (!p1.IsWhite(x, y))
-                    {
-                        Debug.Assert(!p1.IsWhiteColumn(x));
-                        return false;
-                    }
-
-                Debug.Assert(p1.IsWhiteColumn(x));
+                if (!IsLeftWhiteColumn(p1, x))
+                    return false;
             }
         }
+
+        return true;
+    }
+
+    public static bool IsLeftMatchColumn(PixelArray p1, PixelArray p2, int x, int baseline, int baseline1, int baseline2, int height, int maxSupportedDiff, ref int diffTotal, ref int firstDiffX)
+    {
+        for (int y = 0; y < height; y++)
+        {
+            int y1 = y - baseline + baseline1;
+            int y2 = y - baseline + baseline2;
+
+            if (y1 >= 0 && y2 >= 0 && y1 < p1.Height && y2 < p2.Height)
+            {
+                if (!IsLeftMatchPixed(p1, p2, x, y1, y2, ref diffTotal))
+                    return false;
+
+                if (diffTotal > maxSupportedDiff)
+                    return false;
+
+                if (diffTotal > 0 && firstDiffX < 0)
+                    firstDiffX = x;
+            }
+            else
+            {
+                if (y1 >= 0 && y1 < p1.Height)
+                    if (!p1.IsWhite(x, y1))
+                        return false;
+
+                if (y2 >= 0 && y2 < p2.Height)
+                    if (!p2.IsWhite(x, y2))
+                        return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static bool IsLeftWhiteColumn(PixelArray p1, int x)
+    {
+        for (int y = 0; y < p1.Height; y++)
+            if (!p1.IsWhite(x, y))
+            {
+                Debug.Assert(!p1.IsWhiteColumn(x));
+                return false;
+            }
+
+        Debug.Assert(p1.IsWhiteColumn(x));
 
         return true;
     }
@@ -225,26 +242,7 @@ public static class PixelArrayHelper
         bool[,] PixelHardTaken = new bool[Width, Height];
         int PerfectMatchWidth = (int)(Width * (1.0 - perfectMatchRatio));
 
-        for (int y = 0; y < Height; y++)
-        {
-            int x;
-
-            for (x = 0; x < PerfectMatchWidth; x++)
-            {
-                int x1 = Width - x - 1;
-                int y1 = y - Baseline + Baseline1;
-
-                if (x1 < p1.Width && y1 >= 0 && y1 < p1.Height)
-                    if (!p1.IsWhite(x1, y1))
-                        break;
-            }
-
-            for (int x2 = x; x2 < Width; x2++)
-                PixelSoftTaken[Width - x2 - 1, y] = true;
-
-            for (int x2 = x; x2 + rightOverlapWidth < Width; x2++)
-                PixelHardTaken[Width - x2 - rightOverlapWidth - 1, y] = true;
-        }
+        InitializeTakenPixels(p1, rightOverlapWidth, Width, Height, Baseline, Baseline1, PerfectMatchWidth, PixelSoftTaken, PixelHardTaken);
 
         int SoftTakenPixelCount = 0;
 
@@ -252,52 +250,78 @@ public static class PixelArrayHelper
         {
             if (x < p1.Width && x < p2.Width)
             {
-                for (int y = 0; y < Height; y++)
-                {
-                    int y1 = y - Baseline + Baseline1;
-                    int y2 = y - Baseline + Baseline2;
-                    bool IsDifferent = false;
-
-                    if (y1 >= 0 && y2 >= 0 && y1 < p1.Height && y2 < p2.Height)
-                    {
-                        if (PixelSoftTaken[x, y])
-                        {
-                            if (!IsLeftMatchPixed(p1, p2, x, y1, y2, ref DiffTotal))
-                                IsDifferent = true;
-                            else if (DiffTotal > MaxSupportedDiff)
-                                IsDifferent = true;
-                        }
-                    }
-                    else
-                    {
-                        if (y1 >= 0 && y1 < p1.Height)
-                            if (!p1.IsWhite(x, y1))
-                                IsDifferent = true;
-
-                        if (y2 >= 0 && y2 < p2.Height)
-                            if (PixelSoftTaken[x, y] && !p2.IsWhite(x, y2))
-                                IsDifferent = true;
-                    }
-
-                    if (IsDifferent)
-                    {
-                        if (PixelHardTaken[x, y] || SoftTakenPixelCount >= MaxSoftTakenPixelCount)
-                            return false;
-
-                        SoftTakenPixelCount++;
-                    }
-                }
+                if (!IsLeftDiagonalMatchColumn(p1, p2, x, Baseline, Baseline1, Baseline2, Height, MaxSupportedDiff, PixelSoftTaken, PixelHardTaken, ref DiffTotal, ref SoftTakenPixelCount))
+                    return false;
             }
             else if (x < p1.Width)
             {
-                for (int y = 0; y < p1.Height; y++)
-                    if (!p1.IsWhite(x, y))
-                    {
-                        Debug.Assert(!p1.IsWhiteColumn(x));
-                        return false;
-                    }
+                if (!IsLeftWhiteColumn(p1, x))
+                    return false;
+            }
+        }
 
-                Debug.Assert(p1.IsWhiteColumn(x));
+        return true;
+    }
+
+    private static void InitializeTakenPixels(PixelArray p1, int rightOverlapWidth, int width, int height, int baseline, int baseline1, int perfectMatchWidth, bool[,] pixelSoftTaken, bool[,] pixelHardTaken)
+    {
+        for (int y = 0; y < height; y++)
+        {
+            int x;
+
+            for (x = 0; x < perfectMatchWidth; x++)
+            {
+                int x1 = width - x - 1;
+                int y1 = y - baseline + baseline1;
+
+                if (x1 < p1.Width && y1 >= 0 && y1 < p1.Height)
+                    if (!p1.IsWhite(x1, y1))
+                        break;
+            }
+
+            for (int x2 = x; x2 < width; x2++)
+                pixelSoftTaken[width - x2 - 1, y] = true;
+
+            for (int x2 = x; x2 + rightOverlapWidth < width; x2++)
+                pixelHardTaken[width - x2 - rightOverlapWidth - 1, y] = true;
+        }
+    }
+
+    public static bool IsLeftDiagonalMatchColumn(PixelArray p1, PixelArray p2, int x, int baseline, int baseline1, int baseline2, int height, int maxSupportedDiff, bool[,] pixelSoftTaken, bool[,] pixelHardTaken, ref int diffTotal, ref int softTakenPixelCount)
+    {
+        for (int y = 0; y < height; y++)
+        {
+            int y1 = y - baseline + baseline1;
+            int y2 = y - baseline + baseline2;
+            bool IsDifferent = false;
+
+            if (y1 >= 0 && y2 >= 0 && y1 < p1.Height && y2 < p2.Height)
+            {
+                if (pixelSoftTaken[x, y])
+                {
+                    if (!IsLeftMatchPixed(p1, p2, x, y1, y2, ref diffTotal))
+                        IsDifferent = true;
+                    else if (diffTotal > maxSupportedDiff)
+                        IsDifferent = true;
+                }
+            }
+            else
+            {
+                if (y1 >= 0 && y1 < p1.Height)
+                    if (!p1.IsWhite(x, y1))
+                        IsDifferent = true;
+
+                if (y2 >= 0 && y2 < p2.Height)
+                    if (pixelSoftTaken[x, y] && !p2.IsWhite(x, y2))
+                        IsDifferent = true;
+            }
+
+            if (IsDifferent)
+            {
+                if (pixelHardTaken[x, y] || softTakenPixelCount >= MaxSoftTakenPixelCount)
+                    return false;
+
+                softTakenPixelCount++;
             }
         }
 
@@ -321,47 +345,63 @@ public static class PixelArrayHelper
         {
             if (x < p1.Width && x < p2.Width)
             {
-                for (int y = 0; y < Height; y++)
-                {
-                    int y1 = y - Baseline + Baseline1;
-                    int y2 = y - Baseline + Baseline2;
-
-                    if (y1 >= 0 && y2 >= 0 && y1 < p1.Height && y2 < p2.Height)
-                    {
-                        if (!IsRightMatchPixed(p1, p2, x, y1, y2, ref DiffTotal))
-                            return false;
-
-                        if (DiffTotal > MaxSupportedDiff)
-                            return false;
-                    }
-                    else
-                    {
-                        if (y1 >= 0 && y1 < p1.Height)
-                            if (!p1.IsWhite(p1.Width - x - 1, y1))
-                                return false;
-
-                        if (y2 >= 0 && y2 < p2.Height)
-                            if (!p2.IsWhite(p2.Width - x - 1, y2))
-                                return false;
-                    }
-                }
-
-                Debug.Assert(p1.GetColoredCountColumn(p1.Width - x - 1) == p2.GetColoredCountColumn(p2.Width - x - 1));
+                if (!IsRightMatchColumn(p1, p2, x, Baseline, Baseline1, Baseline2, Height, MaxSupportedDiff, ref DiffTotal))
+                    return false;
             }
             else if (x < p1.Width)
             {
-                for (int y = 0; y < p1.Height; y++)
-                {
-                    if (!p1.IsWhite(p1.Width - x - 1, y))
-                    {
-                        Debug.Assert(!p1.IsWhiteColumn(p1.Width - x - 1));
-                        return false;
-                    }
-                }
-
-                Debug.Assert(p1.IsWhiteColumn(p1.Width - x - 1));
+                if (!IsRightWhiteColumn(p1, x))
+                    return false;
             }
         }
+
+        return true;
+    }
+
+    private static bool IsRightMatchColumn(PixelArray p1, PixelArray p2, int x, int baseline, int baseline1, int baseline2, int height, int maxSupportedDiff, ref int diffTotal)
+    {
+        for (int y = 0; y < height; y++)
+        {
+            int y1 = y - baseline + baseline1;
+            int y2 = y - baseline + baseline2;
+
+            if (y1 >= 0 && y2 >= 0 && y1 < p1.Height && y2 < p2.Height)
+            {
+                if (!IsRightMatchPixed(p1, p2, x, y1, y2, ref diffTotal))
+                    return false;
+
+                if (diffTotal > maxSupportedDiff)
+                    return false;
+            }
+            else
+            {
+                if (y1 >= 0 && y1 < p1.Height)
+                    if (!p1.IsWhite(p1.Width - x - 1, y1))
+                        return false;
+
+                if (y2 >= 0 && y2 < p2.Height)
+                    if (!p2.IsWhite(p2.Width - x - 1, y2))
+                        return false;
+            }
+        }
+
+        Debug.Assert(p1.GetColoredCountColumn(p1.Width - x - 1) == p2.GetColoredCountColumn(p2.Width - x - 1));
+
+        return true;
+    }
+
+    private static bool IsRightWhiteColumn(PixelArray p1, int x)
+    {
+        for (int y = 0; y < p1.Height; y++)
+        {
+            if (!p1.IsWhite(p1.Width - x - 1, y))
+            {
+                Debug.Assert(!p1.IsWhiteColumn(p1.Width - x - 1));
+                return false;
+            }
+        }
+
+        Debug.Assert(p1.IsWhiteColumn(p1.Width - x - 1));
 
         return true;
     }

@@ -148,22 +148,22 @@ public class PixelArray
     public byte GetPixel(int x, int y)
     {
         Debug.Assert(IsLoaded);
-        return Array[x + y * _Width];
+        return Array[x + (y * _Width)];
     }
 
     internal void SetPixel(int x, int y, byte value)
     {
-        Array[x + y * _Width] = value;
+        Array[x + (y * _Width)] = value;
     }
 
     internal void ClearPixel(int x, int y)
     {
-        Array[x + y * _Width] = 0xFF;
+        Array[x + (y * _Width)] = 0xFF;
     }
 
     internal bool IsWhite(int x, int y)
     {
-        return Array[x + y * _Width] == 0xFF;
+        return Array[x + (y * _Width)] == 0xFF;
     }
 
     internal bool IsWhiteColumn(int x)
@@ -189,7 +189,7 @@ public class PixelArray
     public bool IsColored(int x, int y, out byte color)
     {
         Debug.Assert(IsLoaded);
-        color = Array[x + y * _Width];
+        color = Array[x + (y * _Width)];
 
         bool IsWhite = color == 0xFF;
         bool IsBlack = color == 0;
@@ -437,7 +437,7 @@ public class PixelArray
         {
             for (int x = 0; x < _Width; x++)
             {
-                uint RGB = Array[x + y * _Width];
+                uint RGB = Array[x + (y * _Width)];
                 uint Pixel = (((RGB >> 0) & 0xFF) + ((RGB >> 8) & 0xFF) + ((RGB >> 16) & 0xFF)) / 3;
 
                 Result += Pixel < 0x40 ? "X" : (y == Baseline ? "." : " ");
