@@ -590,6 +590,7 @@ public static class PixelArrayHelper
             if (y1 >= 0 && y1 < p1.Height)
             {
                 int Left = 0;
+
                 while (Left < p1.Width && p1.IsWhite(p1.Width - 1 - Left, y1))
                     Left++;
 
@@ -602,6 +603,7 @@ public static class PixelArrayHelper
             if (y2 >= 0 && y2 < p2.Height)
             {
                 int Right = 0;
+
                 while (Right < p2.Width && p2.IsWhite(Right, y2))
                     Right++;
 

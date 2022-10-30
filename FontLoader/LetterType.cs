@@ -23,9 +23,21 @@ public record LetterType
     }
 
     public double FontSize { get; }
-    public bool IsBlue { get { return TypeFlags.HasFlag(TypeFlags.Blue); } }
-    public bool IsItalic { get { return TypeFlags.HasFlag(TypeFlags.Italic); } }
-    public bool IsBold { get { return TypeFlags.HasFlag(TypeFlags.Bold); } }
+
+    public bool IsBlue
+    {
+        get { return TypeFlags.HasFlag(TypeFlags.Blue); }
+    }
+
+    public bool IsItalic
+    {
+        get { return TypeFlags.HasFlag(TypeFlags.Italic); }
+    }
+
+    public bool IsBold
+    {
+        get { return TypeFlags.HasFlag(TypeFlags.Bold); }
+    }
 
     private TypeFlags TypeFlags;
 
@@ -64,7 +76,6 @@ public record LetterType
         Debug.Assert(l.FontSize == 0);
         Debug.Assert(fontSize >= MinFontSize);
         Debug.Assert(!l.IsBlue);
-
         return new(fontSize, (isBlue ? TypeFlags.Blue : TypeFlags.Normal) | l.TypeFlags);
     }
 }
