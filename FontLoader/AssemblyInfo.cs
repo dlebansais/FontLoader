@@ -1,3 +1,7 @@
-﻿using System.Runtime.CompilerServices;
+﻿[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("TestFontLoader")]
 
-[assembly: InternalsVisibleTo("TestFontLoader")]
+namespace System.Runtime.CompilerServices;
+
+public class IsExternalInit
+{
+}
