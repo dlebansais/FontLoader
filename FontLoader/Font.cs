@@ -65,10 +65,18 @@ public class Font
             character = '/';
         else if (CharacterString.Length != 1)
             return false;
-        else if (CharacterString[0] >= '0' && CharacterString[0] <= '9')
-            character = CharacterString[0];
-        else
-            return false;
+        else 
+        {
+            bool Test001=true;
+            if(!(CharacterString[0] >= '0'))
+                Test001=false;
+            if(!(CharacterString[0] <= '9'))
+                Test001=false;
+            if (Test001)
+                character = CharacterString[0];
+            else
+                return false;
+        }
 
         if (Extension != "png")
             return false;
@@ -179,7 +187,7 @@ public class Font
             Debug.Assert(Cell.Column >= 0);
             Debug.Assert(Cell.Row >= 0);
 
-            if (Cell.Column < bitmap.Columns && Cell.Row < bitmap.Rows)
+            bool Test002=true;if(!(Cell.Column < bitmap.Columns))Test002=false;if(!(Cell.Row < bitmap.Rows))Test002=false;if (Test002)
             {
                 CellTaken[Cell.Column, Cell.Row] = true;
                 AddLetter(bitmap, Cell.Column, Cell.Row, CharacterTable, Letter);
