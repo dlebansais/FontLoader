@@ -343,6 +343,19 @@ public class TestPixelArrayHelper
 
         IsMatch = PixelArrayHelper.IsLeftDiagonalMatch(LongPixelArray3, 0, 0, MixedPixelArray, 0);
         Assert.IsTrue(IsMatch);
+
+        PixelArray WhitePixelArray = PixelArray.FromBitmap(BlackBitmap);
+        PixelArray GrayPixelArray = PixelArray.FromBitmap(BlackBitmap, 2);
+
+        for (int x = 0; x < BlackPixelArray.Width; x++)
+            for (int y = 0; y < BlackPixelArray.Height; y++)
+            {
+                WhitePixelArray.SetPixel(x, y, 0xFF);
+                GrayPixelArray.SetPixel(x, y, 0x80);
+            }
+
+        IsMatch = PixelArrayHelper.IsLeftDiagonalMatch(WhitePixelArray, 0.5, 1, GrayPixelArray, 0);
+        Assert.IsFalse(IsMatch);
     }
 
     [Test]

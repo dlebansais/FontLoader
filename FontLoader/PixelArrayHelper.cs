@@ -52,7 +52,13 @@ public static partial class PixelArrayHelper
             int OffsetY1 = Baseline - p1.Baseline;
             int OffsetY2 = Baseline - p2.Baseline - offsetY;
 
-            if (y >= OffsetY1 && y < OffsetY1 + p1.Height && y >= OffsetY2 && y < OffsetY2 + p2.Height)
+            bool IsMixedPixel = true;
+            IsMixedPixel &= y >= OffsetY1;
+            IsMixedPixel &= y < OffsetY1 + p1.Height;
+            IsMixedPixel &= y >= OffsetY2;
+            IsMixedPixel &= y < OffsetY2 + p2.Height;
+
+            if (IsMixedPixel)
             {
                 MixPixel(Result, x, y, p1, x, y - OffsetY1, p2, x - TotalWidth + p2.Width, y - OffsetY2, ref isWhite, ref coloredCount);
                 return;
@@ -63,7 +69,11 @@ public static partial class PixelArrayHelper
         {
             int OffsetY = Baseline - p1.Baseline;
 
-            if (y >= OffsetY && y < OffsetY + p1.Height)
+            bool IsPixelFromArray1 = true;
+            IsPixelFromArray1 &= y >= OffsetY;
+            IsPixelFromArray1 &= y < OffsetY + p1.Height;
+
+            if (IsPixelFromArray1)
             {
                 CopyPixel(p1, x, y - OffsetY, Result, x, y, ref isWhite, ref coloredCount);
                 return;
@@ -74,7 +84,11 @@ public static partial class PixelArrayHelper
         {
             int OffsetY = Baseline - p2.Baseline - offsetY;
 
-            if (y >= OffsetY && y < OffsetY + p2.Height)
+            bool IsPixelFromArray2 = true;
+            IsPixelFromArray2 &= y >= OffsetY;
+            IsPixelFromArray2 &= y < OffsetY + p2.Height;
+
+            if (IsPixelFromArray2)
             {
                 CopyPixel(p2, x - TotalWidth + p2.Width, y - OffsetY, Result, x, y, ref isWhite, ref coloredCount);
                 return;

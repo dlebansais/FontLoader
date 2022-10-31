@@ -48,7 +48,12 @@ public static partial class PixelArrayHelper
     {
         int y1 = y - baseline + baseline1;
         int y2 = y - baseline + baseline2;
-        bool IsComparable = y1 >= 0 && y1 < p1.Height && y2 >= 0 && y2 < p2.Height;
+
+        bool IsComparable = true;
+        IsComparable &= y1 >= 0;
+        IsComparable &= y1 < p1.Height;
+        IsComparable &= y2 >= 0;
+        IsComparable &= y2 < p2.Height;
 
         if (IsComparable)
             return IsLeftMatchPixelComparable(p1, p2, x, y1, y2, maxSupportedDiff, ref diffTotal, ref firstDiffX);
