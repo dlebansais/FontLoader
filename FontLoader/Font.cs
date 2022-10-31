@@ -65,18 +65,10 @@ public class Font
             character = '/';
         else if (CharacterString.Length != 1)
             return false;
-        else 
-        {
-            bool Test001=true;
-            if(!(CharacterString[0] >= '0'))
-                Test001=false;
-            if(!(CharacterString[0] <= '9'))
-                Test001=false;
-            if (Test001)
-                character = CharacterString[0];
-            else
-                return false;
-        }
+        else if (CharacterString[0] >= '0' && CharacterString[0] <= '9')
+            character = CharacterString[0];
+        else
+            return false;
 
         if (Extension != "png")
             return false;
