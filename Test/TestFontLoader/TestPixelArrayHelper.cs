@@ -625,10 +625,19 @@ public class TestPixelArrayHelper
         Stream BigBitmapStream = TestAssembly.GetManifestResourceStream($"{typeof(TestPixelArray).Namespace}.Big.png");
         Bitmap BigBitmap = new Bitmap(BigBitmapStream);
         PixelArray BigPixelArray = PixelArray.FromBitmap(BigBitmap);
+
+        int TestVerticalOffset = 7;
+        PixelArray BigPixelArray2 = PixelArray.FromBitmap(BigBitmap, TestVerticalOffset);
+
         PixelArray ReplacedPixelArray = PixelArrayHelper.Replace(BlackPixelArray, BigPixelArray, 0);
 
         Assert.AreEqual(ReplacedPixelArray.Width, BigPixelArray.Width);
         Assert.AreEqual(ReplacedPixelArray.Height, BigPixelArray.Height);
+
+        PixelArray ReplacedPixelArray2 = PixelArrayHelper.Replace(BlackPixelArray, BigPixelArray2, TestVerticalOffset);
+
+        Assert.AreEqual(ReplacedPixelArray2.Width, BigPixelArray.Width);
+        Assert.AreEqual(ReplacedPixelArray2.Height, BigPixelArray.Height + TestVerticalOffset);
     }
 
     [Test]
