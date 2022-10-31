@@ -203,14 +203,22 @@ public class PixelArray
         CommitSource();
         GetClipZone(out int LeftEdge, out int TopEdge, out int RightEdge, out int BottomEdge);
 
-        if (LeftEdge < RightEdge && TopEdge < BottomEdge)
+        bool IsNotEmpty = true;
+        IsNotEmpty &= LeftEdge < RightEdge;
+        IsNotEmpty &= TopEdge < BottomEdge;
+
+        if (IsNotEmpty)
         {
-            if (LeftEdge > 0 || RightEdge < _Width || TopEdge > 0 || BottomEdge < Height)
-            {
-                return Clipped(LeftEdge, TopEdge, RightEdge, BottomEdge);
-            }
-            else
+            bool IsAlreadyClipped = true;
+            IsAlreadyClipped &= LeftEdge <= 0;
+            IsAlreadyClipped &= RightEdge >= _Width;
+            IsAlreadyClipped &= TopEdge <= 0;
+            IsAlreadyClipped &= BottomEdge >= Height;
+
+            if (IsAlreadyClipped)
                 return this;
+            else
+                return Clipped(LeftEdge, TopEdge, RightEdge, BottomEdge);
         }
         else
             return Empty;

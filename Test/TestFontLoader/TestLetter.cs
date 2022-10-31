@@ -2,6 +2,8 @@
 
 using FontLoader;
 using NUnit.Framework;
+using System.Linq;
+using System.Text;
 
 [TestFixture]
 public class TestLetter
@@ -57,6 +59,54 @@ public class TestLetter
         Assert.IsFalse(LetterAForced.IsBold);
         Assert.IsTrue(LetterAForced.IsWhitespace);
         Assert.IsFalse(LetterAForced.IsSingleGlyph);
+
+        Letter LetterABlue = new('A', LetterType.Blue);
+
+        Assert.AreEqual("A", LetterABlue.Text);
+        Assert.AreEqual(LetterType.Blue, LetterABlue.LetterType);
+        Assert.IsFalse(LetterABlue.IsEmpty);
+        Assert.AreEqual($"{LetterABlue.LetterType.BlueTag}A", LetterABlue.DisplayText);
+        Assert.IsTrue(LetterABlue.IsBlue);
+        Assert.IsFalse(LetterABlue.IsItalic);
+        Assert.IsFalse(LetterABlue.IsBold);
+        Assert.IsFalse(LetterABlue.IsWhitespace);
+        Assert.IsTrue(LetterABlue.IsSingleGlyph);
+
+        Letter LetterAItalic = new('A', LetterType.Italic);
+
+        Assert.AreEqual("A", LetterAItalic.Text);
+        Assert.AreEqual(LetterType.Italic, LetterAItalic.LetterType);
+        Assert.IsFalse(LetterAItalic.IsEmpty);
+        Assert.AreEqual($"{LetterAItalic.LetterType.ItalicTag}A", LetterAItalic.DisplayText);
+        Assert.IsFalse(LetterAItalic.IsBlue);
+        Assert.IsTrue(LetterAItalic.IsItalic);
+        Assert.IsFalse(LetterAItalic.IsBold);
+        Assert.IsFalse(LetterAItalic.IsWhitespace);
+        Assert.IsTrue(LetterAItalic.IsSingleGlyph);
+
+        Letter LetterABold = new('A', LetterType.Bold);
+
+        Assert.AreEqual("A", LetterABold.Text);
+        Assert.AreEqual(LetterType.Bold, LetterABold.LetterType);
+        Assert.IsFalse(LetterABold.IsEmpty);
+        Assert.AreEqual($"{LetterABold.LetterType.BoldTag}A", LetterABold.DisplayText);
+        Assert.IsFalse(LetterABold.IsBlue);
+        Assert.IsFalse(LetterABold.IsItalic);
+        Assert.IsTrue(LetterABold.IsBold);
+        Assert.IsFalse(LetterABold.IsWhitespace);
+        Assert.IsTrue(LetterABold.IsSingleGlyph);
+
+        Letter LetterAItalicBold = new('A', LetterType.ItalicBold);
+
+        Assert.AreEqual("A", LetterAItalicBold.Text);
+        Assert.AreEqual(LetterType.ItalicBold, LetterAItalicBold.LetterType);
+        Assert.IsFalse(LetterAItalicBold.IsEmpty);
+        Assert.AreEqual($"{LetterAItalicBold.LetterType.ItalicTag}{LetterAItalicBold.LetterType.BoldTag}A", LetterAItalicBold.DisplayText);
+        Assert.IsFalse(LetterAItalicBold.IsBlue);
+        Assert.IsTrue(LetterAItalicBold.IsItalic);
+        Assert.IsTrue(LetterAItalicBold.IsBold);
+        Assert.IsFalse(LetterAItalicBold.IsWhitespace);
+        Assert.IsTrue(LetterAItalicBold.IsSingleGlyph);
     }
 
     [Test]
@@ -79,5 +129,31 @@ public class TestLetter
         Letter Combo1 = Letter.EmptyNormal;
 
         Assert.IsTrue(Combo1.IsEmpty);
+    }
+
+    [Test]
+    public void SingleGlyphLetters()
+    {
+        foreach (char c in LetterHelper.MultipleGlyphCharacters)
+            Assert.IsFalse(LetterHelper.IsSingleGlyph(c));
+
+        int MaxCharCode = 0xFFFF;
+        for (int i = 0; i < MaxCharCode; i++)
+        {
+            bool IsSurrogate = i >= 0xD800 && i <= 0xDFFF;
+            if (!IsSurrogate)
+            {
+                string ConvertedCharacter = char.ConvertFromUtf32(i);
+                if (ConvertedCharacter.Length == 1)
+                {
+                    char c = ConvertedCharacter[0];
+
+                    if (!LetterHelper.MultipleGlyphCharacters.Contains(c))
+                    {
+                        Assert.IsTrue(LetterHelper.IsSingleGlyph(c));
+                    }
+                }
+            }
+        }
     }
 }

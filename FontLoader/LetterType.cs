@@ -7,6 +7,7 @@ public record LetterType
 {
     public const int MinFontSize = 8;
     public static readonly LetterType Normal = new(TypeFlags.Normal);
+    public static readonly LetterType Blue = new(TypeFlags.Blue);
     public static readonly LetterType Italic = new(TypeFlags.Italic);
     public static readonly LetterType Bold = new(TypeFlags.Bold);
     public static readonly LetterType ItalicBold = new(TypeFlags.Italic | TypeFlags.Bold);
