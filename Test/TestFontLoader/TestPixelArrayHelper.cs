@@ -229,6 +229,14 @@ public class TestPixelArrayHelper
 
         IsMatch = PixelArrayHelper.IsLeftMatch(LongPixelArray3, MixedPixelArray, 0, out _);
         Assert.IsTrue(IsMatch);
+
+        PixelArray MixedPixelArray4 = PixelArray.FromBitmap(MixedBitmap, -20);
+
+        IsMatch = PixelArrayHelper.IsLeftMatch(MixedPixelArray4, LargePixelArray, 0, out _);
+        Assert.IsFalse(IsMatch);
+
+        IsMatch = PixelArrayHelper.IsLeftMatch(LargePixelArray, MixedPixelArray4, 0, out _);
+        Assert.IsFalse(IsMatch);
     }
 
     [Test]
@@ -356,6 +364,14 @@ public class TestPixelArrayHelper
 
         IsMatch = PixelArrayHelper.IsLeftDiagonalMatch(WhitePixelArray, 0.5, 1, GrayPixelArray, 0);
         Assert.IsFalse(IsMatch);
+
+        PixelArray MixedPixelArray2 = PixelArray.FromBitmap(MixedBitmap, 0);
+
+        IsMatch = PixelArrayHelper.IsLeftDiagonalMatch(MixedPixelArray2, 0, 0, LargePixelArray, 0);
+        Assert.IsTrue(IsMatch);
+
+        IsMatch = PixelArrayHelper.IsLeftDiagonalMatch(LargePixelArray, 0, 0, MixedPixelArray2, 0);
+        Assert.IsFalse(IsMatch);
     }
 
     [Test]
@@ -458,6 +474,13 @@ public class TestPixelArrayHelper
 
         IsMatch = PixelArrayHelper.IsRightMatch(LongPixelArray3, MixedPixelArray, 0);
         Assert.IsTrue(IsMatch);
+
+        PixelArray MixedPixelArray4 = PixelArray.FromBitmap(MixedBitmap, 20);
+
+        IsMatch = PixelArrayHelper.IsRightMatch(LargePixelArray, MixedPixelArray4, 0);
+        Assert.IsFalse(IsMatch);
+        IsMatch = PixelArrayHelper.IsRightMatch(MixedPixelArray4, LargePixelArray, 0);
+        Assert.IsFalse(IsMatch);
     }
 
     [Test]
@@ -536,6 +559,9 @@ public class TestPixelArrayHelper
         CutPixelArray = PixelArrayHelper.CutLeft(TestPixelArray, 1);
         Assert.AreEqual(CutPixelArray.Width, TestPixelArray.Width - 1);
         Assert.AreEqual(CutPixelArray.Height, TestPixelArray.Height);
+        CutPixelArray = PixelArrayHelper.CutLeft(TestPixelArray, TestPixelArray.Width * 2);
+        Assert.AreEqual(CutPixelArray.Width, TestPixelArray.Width);
+        Assert.AreEqual(CutPixelArray.Height, TestPixelArray.Height);
     }
 
     [Test]
@@ -552,6 +578,9 @@ public class TestPixelArrayHelper
         Assert.AreEqual(CutPixelArray.Height, TestPixelArray.Height);
         CutPixelArray = PixelArrayHelper.CutRight(TestPixelArray, 1);
         Assert.AreEqual(CutPixelArray.Width, TestPixelArray.Width - 1);
+        Assert.AreEqual(CutPixelArray.Height, TestPixelArray.Height);
+        CutPixelArray = PixelArrayHelper.CutRight(TestPixelArray, TestPixelArray.Width * 2);
+        Assert.AreEqual(CutPixelArray.Width, TestPixelArray.Width);
         Assert.AreEqual(CutPixelArray.Height, TestPixelArray.Height);
     }
 
@@ -639,18 +668,26 @@ public class TestPixelArrayHelper
         Bitmap BigBitmap = new Bitmap(BigBitmapStream);
         PixelArray BigPixelArray = PixelArray.FromBitmap(BigBitmap);
 
-        int TestVerticalOffset = 7;
-        PixelArray BigPixelArray2 = PixelArray.FromBitmap(BigBitmap, TestVerticalOffset);
-
         PixelArray ReplacedPixelArray = PixelArrayHelper.Replace(BlackPixelArray, BigPixelArray, 0);
 
         Assert.AreEqual(ReplacedPixelArray.Width, BigPixelArray.Width);
         Assert.AreEqual(ReplacedPixelArray.Height, BigPixelArray.Height);
 
-        PixelArray ReplacedPixelArray2 = PixelArrayHelper.Replace(BlackPixelArray, BigPixelArray2, TestVerticalOffset);
+        int TestVerticalOffsetHigh = 7;
+        PixelArray BigPixelArrayHigh = PixelArray.FromBitmap(BigBitmap, TestVerticalOffsetHigh);
 
-        Assert.AreEqual(ReplacedPixelArray2.Width, BigPixelArray.Width);
-        Assert.AreEqual(ReplacedPixelArray2.Height, BigPixelArray.Height + TestVerticalOffset);
+        PixelArray ReplacedPixelArrayHigh = PixelArrayHelper.Replace(BlackPixelArray, BigPixelArrayHigh, TestVerticalOffsetHigh);
+
+        Assert.AreEqual(ReplacedPixelArrayHigh.Width, BigPixelArray.Width);
+        Assert.AreEqual(ReplacedPixelArrayHigh.Height, BigPixelArray.Height + TestVerticalOffsetHigh);
+
+        int TestVerticalOffsetLow = -7;
+        PixelArray BigPixelArrayLow = PixelArray.FromBitmap(BigBitmap, TestVerticalOffsetLow);
+
+        PixelArray ReplacedPixelArrayLow = PixelArrayHelper.Replace(BlackPixelArray, BigPixelArrayLow, TestVerticalOffsetLow);
+
+        Assert.AreEqual(ReplacedPixelArrayLow.Width, BigPixelArray.Width);
+        Assert.AreEqual(ReplacedPixelArrayLow.Height, BlackPixelArray.Height - BlackPixelArray.Baseline + BigPixelArrayLow.Baseline - TestVerticalOffsetLow);
     }
 
     [Test]
@@ -677,6 +714,14 @@ public class TestPixelArrayHelper
         Distance = PixelArrayHelper.Distance(BigPixelArray, MixedPixelArray, 0);
         Assert.Less(0, Distance);
         Distance = PixelArrayHelper.Distance(MixedPixelArray, BigPixelArray, 0);
+        Assert.Less(0, Distance);
+
+        PixelArray MixedPixelArray2 = PixelArray.FromBitmap(MixedBitmap, -20);
+
+        Distance = PixelArrayHelper.Distance(BigPixelArray, MixedPixelArray2, 0);
+        Assert.Less(0, Distance);
+
+        Distance = PixelArrayHelper.Distance(MixedPixelArray2, BigPixelArray, 0);
         Assert.Less(0, Distance);
     }
 

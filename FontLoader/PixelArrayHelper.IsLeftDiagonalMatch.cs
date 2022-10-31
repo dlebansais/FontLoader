@@ -116,12 +116,28 @@ public static partial class PixelArrayHelper
         bool IsDifferent = false;
 
         if (y1 >= 0 && y1 < p1.Height)
+        {
             if (!p1.IsWhite(x, y1))
                 IsDifferent = true;
+        }
+        else if (y1 < 0)
+        {
+        }
+        else if (y1 >= p1.Height)
+        {
+        }
 
         if (y2 >= 0 && y2 < p2.Height)
+        {
             if (pixelSoftTaken[x, y] && !p2.IsWhite(x, y2))
                 IsDifferent = true;
+        }
+        else if (y2 < 0)
+        {
+        }
+        else if (y2 >= p2.Height)
+        {
+        }
 
         return IsDifferent;
     }

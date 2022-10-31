@@ -12,8 +12,14 @@ public static partial class PixelArrayHelper
         p2.CommitSource();
 
         for (int x = 0; x < testWidth; x++)
-            if (p1.IsWhiteColumn(x) != p2.IsWhiteColumn(x) || p1.GetColoredCountColumn(x) != p2.GetColoredCountColumn(x))
+        {
+            bool IsColumnDifferent = false;
+            IsColumnDifferent |= p1.IsWhiteColumn(x) != p2.IsWhiteColumn(x);
+            IsColumnDifferent |= p1.GetColoredCountColumn(x) != p2.GetColoredCountColumn(x);
+
+            if (IsColumnDifferent)
                 return false;
+        }
 
         return true;
     }
