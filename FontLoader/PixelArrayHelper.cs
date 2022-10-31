@@ -52,10 +52,7 @@ public static partial class PixelArrayHelper
             int OffsetY1 = Baseline - p1.Baseline;
             int OffsetY2 = Baseline - p2.Baseline - offsetY;
 
-            if (y >= OffsetY1 &&
-                y < OffsetY1 + p1.Height &&
-                y >= OffsetY2 &&
-                y < OffsetY2 + p2.Height)
+            if (y >= OffsetY1 && y < OffsetY1 + p1.Height && y >= OffsetY2 && y < OffsetY2 + p2.Height)
             {
                 MixPixel(Result, x, y, p1, x, y - OffsetY1, p2, x - TotalWidth + p2.Width, y - OffsetY2, ref isWhite, ref coloredCount);
                 return;
